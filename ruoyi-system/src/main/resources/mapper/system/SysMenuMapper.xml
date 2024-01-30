@@ -54,46 +54,80 @@
 		order by m.parent_id, m.order_num
 	</select>
 	
-	<select id="selectMenuListByUserId" parameterType="SysMenu" resultMap="SysMenuResult">
+<!--	<select id="selectMenuListByUserId" parameterType="SysMenu" resultMap="SysMenuResult">-->
+<!--		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time-->
+<!--		from sys_menu m-->
+<!--		left join sys_role_menu rm on m.menu_id = rm.menu_id-->
+<!--		left join sys_user_role ur on rm.role_id = ur.role_id-->
+<!--		left join sys_role ro on ur.role_id = ro.role_id-->
+<!--		where ur.user_id = #{params.userId}-->
+<!--		<if test="menuName != null and menuName != ''">-->
+<!--            AND m.menu_name like concat('%', #{menuName}, '%')-->
+<!--		</if>-->
+<!--		<if test="visible != null and visible != ''">-->
+<!--            AND m.visible = #{visible}-->
+<!--		</if>-->
+<!--		<if test="status != null and status != ''">-->
+<!--            AND m.status = #{status}-->
+<!--		</if>-->
+<!--		order by m.parent_id, m.order_num-->
+<!--	</select>-->
+
+	<select id="selectMenuListByRoleIds" parameterType="List" resultMap="SysMenuResult">
 		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
 		from sys_menu m
 		left join sys_role_menu rm on m.menu_id = rm.menu_id
 		left join sys_user_role ur on rm.role_id = ur.role_id
 		left join sys_role ro on ur.role_id = ro.role_id
-		where ur.user_id = #{params.userId}
-		<if test="menuName != null and menuName != ''">
-            AND m.menu_name like concat('%', #{menuName}, '%')
-		</if>
-		<if test="visible != null and visible != ''">
-            AND m.visible = #{visible}
-		</if>
-		<if test="status != null and status != ''">
-            AND m.status = #{status}
+		where ro.role_id in <foreach collection="list" item="item" open="(" separator="," close=")"> #{item} </foreach>
+<!--		<if test="menuName != null and menuName != ''">-->
+<!--			AND m.menu_name like concat('%', #{menuName}, '%')-->
+<!--		</if>-->
+<!--		<if test="visible != null and visible != ''">-->
+<!--			AND m.visible = #{visible}-->
+<!--		</if>-->
+<!--		<if test="status != null and status != ''">-->
+<!--			AND m.status = #{status}-->
+<!--		</if>-->
+		order by m.parent_id, m.order_num
+	</select>
+
+	<select id="selectMenuListByRoleId" resultType="Long">
+		select m.menu_id
+		from sys_menu m
+		left join sys_role_menu rm on m.menu_id = rm.menu_id
+		where rm.role_id = #{roleId}
+		<if test="menuCheckStrictly">
+			and m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id = rm.menu_id and rm.role_id = #{roleId})
 		</if>
 		order by m.parent_id, m.order_num
 	</select>
     
-    <select id="selectMenuTreeByUserId" parameterType="Long" resultMap="SysMenuResult">
+<!--    <select id="selectMenuTreeByUserId" parameterType="String" resultMap="SysMenuResult">-->
+<!--		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time-->
+<!--		from sys_menu m-->
+<!--			 left join sys_role_menu rm on m.menu_id = rm.menu_id-->
+<!--			 left join sys_user_role ur on rm.role_id = ur.role_id-->
+<!--			 left join sys_role ro on ur.role_id = ro.role_id-->
+<!--			 left join sys_user u on ur.user_id = u.user_id-->
+<!--		where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.status = 0  AND ro.status = 0-->
+<!--		order by m.parent_id, m.order_num-->
+<!--	</select>-->
+
+	<select id="selectMenuTreeByRoleIds" parameterType="List" resultMap="SysMenuResult">
 		select distinct m.menu_id, m.parent_id, m.menu_name, m.path, m.component, m.`query`, m.visible, m.status, ifnull(m.perms,'') as perms, m.is_frame, m.is_cache, m.menu_type, m.icon, m.order_num, m.create_time
 		from sys_menu m
-			 left join sys_role_menu rm on m.menu_id = rm.menu_id
-			 left join sys_user_role ur on rm.role_id = ur.role_id
-			 left join sys_role ro on ur.role_id = ro.role_id
-			 left join sys_user u on ur.user_id = u.user_id
-		where u.user_id = #{userId} and m.menu_type in ('M', 'C') and m.status = 0  AND ro.status = 0
+				 left join sys_role_menu rm on m.menu_id = rm.menu_id
+				 left join sys_role ro on rm.role_id = ro.role_id
+		where
+		    ro.role_id in <foreach collection="list" item="roleId" open="(" separator="," close=")">
+		       #{roleId}
+	        </foreach>
+	        and m.menu_type in ('M', 'C') and m.status = 0  AND ro.status = 0
 		order by m.parent_id, m.order_num
 	</select>
 	
-	<select id="selectMenuListByRoleId" resultType="Long">
-		select m.menu_id
-		from sys_menu m
-            left join sys_role_menu rm on m.menu_id = rm.menu_id
-        where rm.role_id = #{roleId}
-            <if test="menuCheckStrictly">
-              and m.menu_id not in (select m.parent_id from sys_menu m inner join sys_role_menu rm on m.menu_id = rm.menu_id and rm.role_id = #{roleId})
-            </if>
-		order by m.parent_id, m.order_num
-	</select>
+
 	
 	<select id="selectMenuPerms" resultType="String">
 		select distinct m.perms
@@ -102,7 +136,7 @@
 			 left join sys_user_role ur on rm.role_id = ur.role_id
 	</select>
 
-	<select id="selectMenuPermsByUserId" parameterType="Long" resultType="String">
+	<select id="selectMenuPermsByUserId" parameterType="String" resultType="String">
 		select distinct m.perms
 		from sys_menu m
 			 left join sys_role_menu rm on m.menu_id = rm.menu_id

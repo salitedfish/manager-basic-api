@@ -3,6 +3,7 @@ package com.ruoyi.system.service;
 import java.util.List;
 import java.util.Set;
 import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.domain.SysUserRole;
 
 /**
@@ -26,7 +27,29 @@ public interface ISysRoleService
      * @param userId 用户ID
      * @return 角色列表
      */
-    public List<SysRole> selectRolesByUserId(Long userId);
+    public List<SysRole> selectRolesByUserId(String userId);
+
+    /**
+     * 根据用户查询此用户继承的所有角色列表
+     *
+     * @param user 用户
+     * @return 角色列表
+     */
+    public List<SysRole> selectALLRolesByUser(SysUser user);
+
+    /**
+     * 根据用户查询查询此用户继承的所有角色id列表
+     * @param user
+     * @return
+     */
+    public Set<Long> selectAllRolesIdByUser(SysUser user);
+
+    /**
+     * 根据用户查询此用户继承的所有角色标识
+     * @param user
+     * @return
+     */
+    public Set<String> selectALLRolesSetByUser(SysUser user);
 
     /**
      * 根据用户ID查询角色权限
@@ -34,7 +57,7 @@ public interface ISysRoleService
      * @param userId 用户ID
      * @return 权限列表
      */
-    public Set<String> selectRolePermissionByUserId(Long userId);
+    public Set<String> selectRolePermissionByUserId(String userId);
 
     /**
      * 查询所有角色
@@ -49,7 +72,7 @@ public interface ISysRoleService
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
-    public List<Long> selectRoleListByUserId(Long userId);
+    public List<Long> selectRoleListByUserId(String userId);
 
     /**
      * 通过角色ID查询角色
@@ -160,7 +183,7 @@ public interface ISysRoleService
      * @param userIds 需要取消授权的用户数据ID
      * @return 结果
      */
-    public int deleteAuthUsers(Long roleId, Long[] userIds);
+    public int deleteAuthUsers(Long roleId, String[] userIds);
 
     /**
      * 批量选择授权用户角色
@@ -169,5 +192,5 @@ public interface ISysRoleService
      * @param userIds 需要删除的用户数据ID
      * @return 结果
      */
-    public int insertAuthUsers(Long roleId, Long[] userIds);
+    public int insertAuthUsers(Long roleId, String[] userIds);
 }

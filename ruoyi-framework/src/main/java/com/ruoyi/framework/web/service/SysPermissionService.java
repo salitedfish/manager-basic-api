@@ -3,6 +3,13 @@ package com.ruoyi.framework.web.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysDeptRole;
+import com.ruoyi.system.domain.SysPost;
+import com.ruoyi.system.domain.SysPostRole;
+import com.ruoyi.system.service.ISysDeptService;
+import com.ruoyi.system.service.ISysPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -25,26 +32,35 @@ public class SysPermissionService
     @Autowired
     private ISysMenuService menuService;
 
-    /**
-     * 获取角色数据权限
-     * 
-     * @param user 用户信息
-     * @return 角色权限信息
-     */
-    public Set<String> getRolePermission(SysUser user)
-    {
-        Set<String> roles = new HashSet<String>();
-        // 管理员拥有所有权限
-        if (user.isAdmin())
-        {
-            roles.add("admin");
-        }
-        else
-        {
-            roles.addAll(roleService.selectRolePermissionByUserId(user.getUserId()));
-        }
-        return roles;
-    }
+    @Autowired
+    private ISysDeptService deptService;
+
+    @Autowired
+    private ISysPostService postService;
+
+//    @Autowired
+//    private
+
+//    /**
+//     * 获取角色数据权限
+//     *
+//     * @param user 用户信息
+//     * @return 角色权限信息
+//     */
+//    public Set<String> getRolePermission(SysUser user)
+//    {
+//        Set<String> roles = new HashSet<String>();
+//        // 管理员拥有所有权限
+//        if (user.isAdmin())
+//        {
+//            roles.add("admin");
+//        }
+//        else
+//        {
+//            roles.addAll(roleService.selectRolePermissionByUserId(user.getUserId()));
+//        }
+//        return roles;
+//    }
 
     /**
      * 获取菜单数据权限
@@ -63,6 +79,7 @@ public class SysPermissionService
         else
         {
             List<SysRole> roles = user.getRoles();
+
             if (!CollectionUtils.isEmpty(roles))
             {
                 // 多角色设置permissions属性，以便数据权限匹配权限
@@ -73,10 +90,10 @@ public class SysPermissionService
                     perms.addAll(rolePerms);
                 }
             }
-            else
-            {
-                perms.addAll(menuService.selectMenuPermsByUserId(user.getUserId()));
-            }
+//            else
+//            {
+//                perms.addAll(menuService.selectMenuPermsByUserId(user.getUserId()));
+//            }
         }
         return perms;
     }

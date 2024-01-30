@@ -1,6 +1,9 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.domain.SysDeptRole;
 import org.apache.ibatis.annotations.Param;
 import com.ruoyi.common.core.domain.entity.SysDept;
 
@@ -34,7 +37,7 @@ public interface SysDeptMapper
      * @param deptId 部门ID
      * @return 部门信息
      */
-    public SysDept selectDeptById(Long deptId);
+    public SysDept selectDeptById(String deptId);
 
     /**
      * 根据ID查询所有子部门
@@ -42,7 +45,7 @@ public interface SysDeptMapper
      * @param deptId 部门ID
      * @return 部门列表
      */
-    public List<SysDept> selectChildrenDeptById(Long deptId);
+    public List<SysDept> selectChildrenDeptById(String deptId);
 
     /**
      * 根据ID查询所有子部门（正常状态）
@@ -50,7 +53,7 @@ public interface SysDeptMapper
      * @param deptId 部门ID
      * @return 子部门数
      */
-    public int selectNormalChildrenDeptById(Long deptId);
+    public int selectNormalChildrenDeptById(String deptId);
 
     /**
      * 是否存在子节点
@@ -58,7 +61,7 @@ public interface SysDeptMapper
      * @param deptId 部门ID
      * @return 结果
      */
-    public int hasChildByDeptId(Long deptId);
+    public int hasChildByDeptId(String deptId);
 
     /**
      * 查询部门是否存在用户
@@ -66,7 +69,7 @@ public interface SysDeptMapper
      * @param deptId 部门ID
      * @return 结果
      */
-    public int checkDeptExistUser(Long deptId);
+    public int checkDeptExistUser(String deptId);
 
     /**
      * 校验部门名称是否唯一
@@ -75,7 +78,7 @@ public interface SysDeptMapper
      * @param parentId 父部门ID
      * @return 结果
      */
-    public SysDept checkDeptNameUnique(@Param("deptName") String deptName, @Param("parentId") Long parentId);
+    public SysDept checkDeptNameUnique(@Param("deptName") String deptName, @Param("parentId") String parentId);
 
     /**
      * 新增部门信息
@@ -98,7 +101,7 @@ public interface SysDeptMapper
      * 
      * @param deptIds 部门ID组
      */
-    public void updateDeptStatusNormal(Long[] deptIds);
+    public void updateDeptStatusNormal(String[] deptIds);
 
     /**
      * 修改子元素关系
@@ -114,5 +117,33 @@ public interface SysDeptMapper
      * @param deptId 部门ID
      * @return 结果
      */
-    public int deleteDeptById(Long deptId);
+    public int deleteDeptById(String deptId);
+
+
+
+    /**
+     * 新增部门关联角色
+     * @param deptRoles
+     */
+    public int insertDeptRole(List<SysDeptRole> deptRoles);
+
+    /**
+     * 删除部门关联的全部角色
+     * @param dept
+     */
+    public void deleteDeptRole(SysDept dept);
+
+    /**
+     * 通过部门关联角色表id删除部门关联的角色
+     * @param deptRoleIds
+     */
+    public int deleteDeptRoleList(List<SysDeptRole> deptRoleIds);
+
+    /**
+     * 通过部门查询关联的角色列表
+     * @param sdr
+     * @return
+     */
+    public List<SysRole> selectRoleListByDept(SysDeptRole sdr);
+
 }

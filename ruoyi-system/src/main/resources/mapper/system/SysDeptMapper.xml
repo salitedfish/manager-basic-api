@@ -21,6 +21,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"   column="update_by"   />
 		<result property="updateTime" column="update_time" />
 	</resultMap>
+
+	<resultMap type="SysRole" id="SysRoleResult">
+		<id     property="roleId"             column="role_id"               />
+		<result property="roleName"           column="role_name"             />
+		<result property="roleKey"            column="role_key"              />
+		<result property="roleSort"           column="role_sort"             />
+		<result property="dataScope"          column="data_scope"            />
+		<result property="menuCheckStrictly"  column="menu_check_strictly"   />
+		<result property="deptCheckStrictly"  column="dept_check_strictly"   />
+		<result property="status"             column="status"                />
+		<result property="delFlag"            column="del_flag"              />
+		<result property="createBy"           column="create_by"             />
+		<result property="createTime"         column="create_time"           />
+		<result property="updateBy"           column="update_by"             />
+		<result property="updateTime"         column="update_time"           />
+		<result property="remark"             column="remark"                />
+	</resultMap>
 	
 	<sql id="selectDeptVo">
         select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time 
@@ -30,10 +47,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="selectDeptList" parameterType="SysDept" resultMap="SysDeptResult">
         <include refid="selectDeptVo"/>
         where d.del_flag = '0'
-		<if test="deptId != null and deptId != 0">
+		<if test="deptId != null and deptId != ''">
 			AND dept_id = #{deptId}
 		</if>
-        <if test="parentId != null and parentId != 0">
+        <if test="parentId != null and parentId != ''">
 			AND parent_id = #{parentId}
 		</if>
 		<if test="deptName != null and deptName != ''">
@@ -58,27 +75,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by d.parent_id, d.order_num
 	</select>
     
-    <select id="selectDeptById" parameterType="Long" resultMap="SysDeptResult">
+    <select id="selectDeptById" parameterType="String" resultMap="SysDeptResult">
 		select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status,
 			(select dept_name from sys_dept where dept_id = d.parent_id) parent_name
 		from sys_dept d
 		where d.dept_id = #{deptId}
 	</select>
     
-    <select id="checkDeptExistUser" parameterType="Long" resultType="int">
+    <select id="checkDeptExistUser" parameterType="String" resultType="int">
 		select count(1) from sys_user where dept_id = #{deptId} and del_flag = '0'
 	</select>
 	
-	<select id="hasChildByDeptId" parameterType="Long" resultType="int">
+	<select id="hasChildByDeptId" parameterType="String" resultType="int">
 		select count(1) from sys_dept
 		where del_flag = '0' and parent_id = #{deptId} limit 1
 	</select>
 	
-	<select id="selectChildrenDeptById" parameterType="Long" resultMap="SysDeptResult">
+	<select id="selectChildrenDeptById" parameterType="String" resultMap="SysDeptResult">
 		select * from sys_dept where find_in_set(#{deptId}, ancestors)
 	</select>
 	
-	<select id="selectNormalChildrenDeptById" parameterType="Long" resultType="int">
+	<select id="selectNormalChildrenDeptById" parameterType="String" resultType="int">
 		select count(*) from sys_dept where status = 0 and del_flag = '0' and find_in_set(#{deptId}, ancestors)
 	</select>
 	
@@ -89,8 +106,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <insert id="insertDept" parameterType="SysDept">
  		insert into sys_dept(
- 			<if test="deptId != null and deptId != 0">dept_id,</if>
- 			<if test="parentId != null and parentId != 0">parent_id,</if>
+ 			<if test="deptId != null and deptId != ''">dept_id,</if>
+ 			<if test="parentId != null and parentId != ''">parent_id,</if>
  			<if test="deptName != null and deptName != ''">dept_name,</if>
  			<if test="ancestors != null and ancestors != ''">ancestors,</if>
  			<if test="orderNum != null">order_num,</if>
@@ -101,8 +118,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="createBy != null and createBy != ''">create_by,</if>
  			create_time
  		)values(
- 			<if test="deptId != null and deptId != 0">#{deptId},</if>
- 			<if test="parentId != null and parentId != 0">#{parentId},</if>
+ 			<if test="deptId != null and deptId != ''">#{deptId},</if>
+ 			<if test="parentId != null and parentId != ''">#{parentId},</if>
  			<if test="deptName != null and deptName != ''">#{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">#{ancestors},</if>
  			<if test="orderNum != null">#{orderNum},</if>
@@ -118,7 +135,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="updateDept" parameterType="SysDept">
  		update sys_dept
  		<set>
- 			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
+ 			<if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
  			<if test="deptName != null and deptName != ''">dept_name = #{deptName},</if>
  			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
  			<if test="orderNum != null">order_num = #{orderNum},</if>
@@ -145,15 +162,66 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	    </foreach>
 	</update>
 	 
-	<update id="updateDeptStatusNormal" parameterType="Long">
+	<update id="updateDeptStatusNormal" parameterType="String">
  	    update sys_dept set status = '0' where dept_id in 
  	    <foreach collection="array" item="deptId" open="(" separator="," close=")">
         	#{deptId}
         </foreach>
 	</update>
 	
-	<delete id="deleteDeptById" parameterType="Long">
+	<delete id="deleteDeptById" parameterType="String">
 		update sys_dept set del_flag = '2' where dept_id = #{deptId}
 	</delete>
 
+	<select id="selectRoleListByDept" parameterType="SysDeptRole" resultMap="SysRoleResult">
+		select distinct sr.role_id, sr.role_name, sr.role_key, sr.role_sort, sr.data_scope, sr.menu_check_strictly, sr.dept_check_strictly,
+		sr.status, sr.del_flag, sr.create_time, sr.remark
+		from sys_dept_role sdr
+		left join sys_role sr on sdr.role_id = sr.role_id
+		left join sys_dept sd on sd.dept_id = sdr.dept_id
+		where sr.del_flag = '0' and sd.status = '0' and sdr.dept_id = #{deptId}
+		<if test="id != null and id != 0">
+			and sdr.id = #{id}
+		</if>
+		<if test="roleId != null and roleId != 0">
+			and sr.role_id = #{roleId}
+		</if>
+		<if test="roleName != null and roleName != ''">
+			and sr.role_name = #{roleName}
+		</if>
+		<if test="createBy != null and createBy != ''">
+			and sr.create_by = #{createBy}
+		</if>
+		<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+			and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+		</if>
+		<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+			and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+		</if>
+	</select>
+
+	<insert id="insertDeptRole" parameterType="List">
+		insert into sys_dept_role(
+		dept_id,
+		role_id,
+		create_by,
+		create_time
+		)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.deptId}, #{item.roleId}, #{item.createBy}, sysdate())
+		</foreach>
+	</insert>
+
+	<delete id="deleteDeptRole" parameterType="SysDept">
+		delete from sys_dept_role where dept_id = #{deptId}
+	</delete>
+
+	<delete id="deleteDeptRoleList" parameterType="List">
+        delete from sys_dept_role
+		where concat(dept_id, role_id) in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+			concat(#{item.deptId, item.roleId})
+		</foreach>
+	</delete>
 </mapper> 

@@ -5,6 +5,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.ruoyi.system.domain.*;
+import com.ruoyi.system.service.ISysDeptService;
+import com.ruoyi.system.service.ISysPostService;
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +22,6 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
-import com.ruoyi.system.domain.SysRoleDept;
-import com.ruoyi.system.domain.SysRoleMenu;
-import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.mapper.SysRoleDeptMapper;
 import com.ruoyi.system.mapper.SysRoleMapper;
 import com.ruoyi.system.mapper.SysRoleMenuMapper;
@@ -45,6 +48,15 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Autowired
     private SysRoleDeptMapper roleDeptMapper;
 
+    @Autowired
+    private ISysDeptService deptService;
+
+    @Autowired
+    private ISysUserService userService;
+
+    @Autowired
+    private ISysPostService postService;
+
     /**
      * 根据条件分页查询角色数据
      * 
@@ -65,7 +77,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @return 角色列表
      */
     @Override
-    public List<SysRole> selectRolesByUserId(Long userId)
+    public List<SysRole> selectRolesByUserId(String userId)
     {
         List<SysRole> userRoles = roleMapper.selectRolePermissionByUserId(userId);
         List<SysRole> roles = selectRoleAll();
@@ -84,13 +96,103 @@ public class SysRoleServiceImpl implements ISysRoleService
     }
 
     /**
+     * 根据用户查询此用户继承的所有角色列表
+     *
+     * @param user 用户
+     * @return 角色列表
+     */
+    @Override
+    public List<SysRole> selectALLRolesByUser(SysUser user) {
+
+        List<SysRole> roles = roleMapper.selectRolePermissionByUserId(user.getUserId());
+
+        // 获取用户部门路径上的所有角色
+        String deptFullPathId = user.getDeptFullPathId();
+        String[] deptIds = deptFullPathId.split(",");
+        if(StringUtils.isNotEmpty(deptIds)) {
+            for(String deptId: deptIds) {
+                SysDeptRole sdr = new SysDeptRole();
+                sdr.setDeptId(deptId);
+                List<SysRole> srs = deptService.selectRoleListByDept(sdr);
+                roles.addAll(srs);
+            }
+        }
+
+        // 获取用户所有岗位上的所有角色
+        List<String> postIds = postService.selectPostListByUserId(user.getUserId());
+        if(StringUtils.isNotEmpty(postIds)) {
+            for(String postId: postIds) {
+                SysPostRole spr = new SysPostRole();
+                spr.setPostId(postId);
+                List<SysRole> srs = postService.selectRoleListByPost(spr);
+                roles.addAll(srs);
+            }
+        }
+
+        // 角色列表去重
+        List<SysRole> rolesNoRepeat = new ArrayList<>();
+        for(SysRole sr: roles) {
+            boolean repeat = false;
+            for(SysRole sr1: rolesNoRepeat) {
+                if(sr1.getRoleId().longValue() == sr.getRoleId().longValue()) {
+                    repeat = true;
+                    break;
+                }
+            }
+            if(!repeat) {
+                rolesNoRepeat.add(sr);
+            }
+        }
+
+
+        return rolesNoRepeat;
+
+    };
+
+    /**
+     * 根据用户查询查询此用户继承的所有角色id列表
+     * @param user
+     * @return
+     */
+    public Set<Long> selectAllRolesIdByUser(SysUser user) {
+        Set<Long> idSet = new HashSet<>();
+        List<SysRole> roles = selectALLRolesByUser(user);
+        for (SysRole role : roles)
+        {
+            if (StringUtils.isNotNull(role))
+            {
+                idSet.addAll(Arrays.asList(role.getRoleId()));
+            }
+        }
+        return idSet;
+    }
+
+    /**
+     * 根据用户查询此用户继承的所有角色标识列表
+     * @param user
+     * @return
+     */
+    public Set<String> selectALLRolesSetByUser(SysUser user) {
+        Set<String> permsSet = new HashSet<>();
+        List<SysRole> perms = selectALLRolesByUser(user);
+        for (SysRole perm : perms)
+        {
+            if (StringUtils.isNotNull(perm))
+            {
+                permsSet.addAll(Arrays.asList(perm.getRoleKey().trim().split(",")));
+            }
+        }
+        return permsSet;
+    };
+
+    /**
      * 根据用户ID查询权限
      * 
      * @param userId 用户ID
      * @return 权限列表
      */
     @Override
-    public Set<String> selectRolePermissionByUserId(Long userId)
+    public Set<String> selectRolePermissionByUserId(String userId)
     {
         List<SysRole> perms = roleMapper.selectRolePermissionByUserId(userId);
         Set<String> permsSet = new HashSet<>();
@@ -122,7 +224,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @return 选中角色ID列表
      */
     @Override
-    public List<Long> selectRoleListByUserId(Long userId)
+    public List<Long> selectRoleListByUserId(String userId)
     {
         return roleMapper.selectRoleListByUserId(userId);
     }
@@ -317,7 +419,7 @@ public class SysRoleServiceImpl implements ISysRoleService
         int rows = 1;
         // 新增角色与部门（数据权限）管理
         List<SysRoleDept> list = new ArrayList<SysRoleDept>();
-        for (Long deptId : role.getDeptIds())
+        for (String deptId : role.getDeptIds())
         {
             SysRoleDept rd = new SysRoleDept();
             rd.setRoleId(role.getRoleId());
@@ -395,7 +497,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @return 结果
      */
     @Override
-    public int deleteAuthUsers(Long roleId, Long[] userIds)
+    public int deleteAuthUsers(Long roleId, String[] userIds)
     {
         return userRoleMapper.deleteUserRoleInfos(roleId, userIds);
     }
@@ -408,11 +510,11 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @return 结果
      */
     @Override
-    public int insertAuthUsers(Long roleId, Long[] userIds)
+    public int insertAuthUsers(Long roleId, String[] userIds)
     {
         // 新增用户与角色管理
         List<SysUserRole> list = new ArrayList<SysUserRole>();
-        for (Long userId : userIds)
+        for (String userId : userIds)
         {
             SysUserRole ur = new SysUserRole();
             ur.setUserId(userId);

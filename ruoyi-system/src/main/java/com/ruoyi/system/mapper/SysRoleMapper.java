@@ -2,6 +2,8 @@ package com.ruoyi.system.mapper;
 
 import java.util.List;
 import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.domain.SysDeptRole;
+import com.ruoyi.system.domain.SysPostRole;
 
 /**
  * 角色表 数据层
@@ -24,7 +26,7 @@ public interface SysRoleMapper
      * @param userId 用户ID
      * @return 角色列表
      */
-    public List<SysRole> selectRolePermissionByUserId(Long userId);
+    public List<SysRole> selectRolePermissionByUserId(String userId);
 
     /**
      * 查询所有角色
@@ -39,7 +41,7 @@ public interface SysRoleMapper
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
-    public List<Long> selectRoleListByUserId(Long userId);
+    public List<Long> selectRoleListByUserId(String userId);
 
     /**
      * 通过角色ID查询角色

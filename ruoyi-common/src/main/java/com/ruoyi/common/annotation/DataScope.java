@@ -30,4 +30,15 @@ public @interface DataScope
      * 权限字符（用于多个角色匹配符合要求的权限）默认根据权限注解@ss获取，多个权限用逗号分隔开来
      */
     public String permission() default "";
+
+    /**
+     * 业务权限标识
+     */
+    public String businessCode() default "";
+
+    /**
+     * 判断权限所参照的表别名
+     * @return
+     */
+    public String tableAlias() default "";
 }

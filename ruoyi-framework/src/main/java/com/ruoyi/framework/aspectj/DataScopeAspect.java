@@ -1,10 +1,21 @@
 package com.ruoyi.framework.aspectj;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
+import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.enums.BusinessAuthOrgType;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.system.mapper.SysBusinessAuthMapper;
+import com.ruoyi.system.mapper.SysConfigMapper;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.core.domain.BaseEntity;
@@ -55,6 +66,13 @@ public class DataScopeAspect
      */
     public static final String DATA_SCOPE = "dataScope";
 
+    @Autowired
+    private SysBusinessAuthMapper businessAuthMapper;
+
+    @Autowired
+    private RedisCache redisCache;
+
+
     @Before("@annotation(controllerDataScope)")
     public void doBefore(JoinPoint point, DataScope controllerDataScope) throws Throwable
     {
@@ -72,9 +90,66 @@ public class DataScopeAspect
             // 如果是超级管理员，则不过滤数据
             if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin())
             {
-                String permission = StringUtils.defaultIfEmpty(controllerDataScope.permission(), PermissionContextHolder.getContext());
+                //获取登录用户的数据权限
+                List<SysBusinessAuth> sbas = loginUser.getBusinessAuthList();
+                System.out.println("当前登录用户权限列表" + sbas);
+                System.out.println("当前登录用户角色列表" + loginUser.getUser().getRoles());
+                // 获取需要过滤的业务标识
+                String businessCode = controllerDataScope.businessCode();
+                // 根据业务标识过滤有哪些业务权限
+                List<SysBusinessAuth> currentAuths = sbas.stream().filter(sba->sba.getBusinessCode().equals(businessCode)).collect(Collectors.toList());
+                // 将人员和部门的业务权限区分开，生成set去重
+                Set<String> deptIds = currentAuths.stream().filter(sba->sba.getManageOrgType().equals(BusinessAuthOrgType.DEPT)).map(sba->sba.getManageOrgId()).collect(Collectors.toSet());
+                Set<String> userIds = currentAuths.stream().filter(sba->sba.getManageOrgType().equals(BusinessAuthOrgType.USER)).map(sba->sba.getManageOrgId()).collect(Collectors.toSet());
+
                 dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
-                        controllerDataScope.userAlias(), permission);
+                        controllerDataScope.userAlias(), deptIds, userIds);
+
+//                String permission = StringUtils.defaultIfEmpty(controllerDataScope.permission(), PermissionContextHolder.getContext());
+//                dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
+//                        controllerDataScope.userAlias(), permission);
+
+            }
+        }
+    }
+
+    /**
+     * 数据范围过滤（二开）
+     * @param joinPoint
+     * @param user
+     * @param deptAlias
+     * @param userAlias
+     * @param deptIds
+     * @param userIds
+     */
+    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias, Set<String> deptIds, Set<String> userIds) {
+
+
+        StringBuilder sqlString = new StringBuilder();
+        List<String> conditions = new ArrayList<>();
+
+        if(StringUtils.isNotEmpty(deptAlias)) {
+            for(String deptId: deptIds) {
+               sqlString.append(StringUtils.format(" OR {}.dept_id = {} ) ", deptAlias, deptId));
+               conditions.add(deptId);
+            }
+        }
+
+        if(StringUtils.isNotEmpty(userAlias)) {
+            for(String userId: userIds) {
+                sqlString.append(StringUtils.format(" OR {}.create_by IN (SELECT user_name FROM sys_user WHERE user_id = {})", deptAlias, userId));
+                conditions.add(userId);
+            }
+        }
+
+        if(StringUtils.isEmpty(conditions)) {
+            sqlString.append(StringUtils.format(" OR 1 = 0 "));
+        } else {
+            Object params = joinPoint.getArgs()[0];
+            if (StringUtils.isNotNull(params) && params instanceof BaseEntity)
+            {
+                BaseEntity baseEntity = (BaseEntity) params;
+                baseEntity.getParams().put(DATA_SCOPE, " AND (" + sqlString.substring(4) + ")");
             }
         }
     }
@@ -90,6 +165,8 @@ public class DataScopeAspect
      */
     public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias, String permission)
     {
+
+
         StringBuilder sqlString = new StringBuilder();
         List<String> conditions = new ArrayList<String>();
 

@@ -1,6 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+import java.util.Set;
+
 import org.apache.ibatis.annotations.Param;
 import com.ruoyi.common.core.domain.entity.SysMenu;
 
@@ -19,20 +21,27 @@ public interface SysMenuMapper
      */
     public List<SysMenu> selectMenuList(SysMenu menu);
 
-    /**
-     * 根据用户所有权限
-     *
-     * @return 权限列表
-     */
-    public List<String> selectMenuPerms();
+//    /**
+//     * 根据用户所有权限
+//     *
+//     * @return 权限列表
+//     */
+//    public List<String> selectMenuPerms();
+//
+//    /**
+//     * 根据用户查询系统菜单列表
+//     *
+//     * @param menu 菜单信息
+//     * @return 菜单列表
+//     */
+//    public List<SysMenu> selectMenuListByUserId(SysMenu menu);
 
     /**
-     * 根据用户查询系统菜单列表
-     *
-     * @param menu 菜单信息
-     * @return 菜单列表
+     * 根据角色列表查询系统菜单列表
+     * @param roleIds
+     * @return
      */
-    public List<SysMenu> selectMenuListByUserId(SysMenu menu);
+    public List<SysMenu> selectMenuListByRoleIds(List roleIds);
 
     /**
      * 根据角色ID查询权限
@@ -42,13 +51,13 @@ public interface SysMenuMapper
      */
     public List<String> selectMenuPermsByRoleId(Long roleId);
 
-    /**
-     * 根据用户ID查询权限
-     *
-     * @param userId 用户ID
-     * @return 权限列表
-     */
-    public List<String> selectMenuPermsByUserId(Long userId);
+//    /**
+//     * 根据用户ID查询权限
+//     *
+//     * @param userId 用户ID
+//     * @return 权限列表
+//     */
+//    public List<String> selectMenuPermsByUserId(String userId);
 
     /**
      * 根据用户ID查询菜单
@@ -57,13 +66,18 @@ public interface SysMenuMapper
      */
     public List<SysMenu> selectMenuTreeAll();
 
+//    /**
+//     * 根据用户ID查询菜单
+//     *
+//     * @param userId 用户ID
+//     * @return 菜单列表
+//     */
+//    public List<SysMenu> selectMenuTreeByUserId(String userId);
+
     /**
-     * 根据用户ID查询菜单
-     *
-     * @param userId 用户ID
-     * @return 菜单列表
+     * 根据用户ID查询全部菜单
      */
-    public List<SysMenu> selectMenuTreeByUserId(Long userId);
+    public List<SysMenu> selectMenuTreeByRoleIds(List<Long> roleIds);
 
     /**
      * 根据角色ID查询菜单树信息

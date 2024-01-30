@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysBusinessAuthMapper">
+
+    <resultMap type="SysBusinessAuth" id="SysBusinessAuthResult">
+        <id     property="id"         column="id"        />
+        <result property="businessId"  column="business_id"      />
+        <result property="businessCode"  column="business_code"      />
+        <result property="businessName"  column="business_name"      />
+        <result property="orgId"     column="org_id"    />
+        <result property="orgType"       column="org_type"      />
+        <result property="orgName"       column="org_name"      />
+        <result property="manageOrgId"       column="manage_org_id"      />
+        <result property="manageOrgType"       column="manage_org_type"      />
+        <result property="manageOrgName"       column="manage_org_name"      />
+        <result property="createBy"       column="create_by"      />
+        <result property="createByNickName"       column="create_by_nick_name"      />
+        <result property="createTime"       column="create_time"      />
+<!--        <result property="deptFullPathId"       column="dept_full_path_id"      />-->
+    </resultMap>
+
+    <sql id="selectBusinessAuthVo">
+        select
+            distinct
+            sba.id,
+            sba.business_id as business_id,
+            sb.business_code as business_code,
+            sb.business_name as business_name,
+            org_id,
+            org_type,
+            org.name as org_name,
+            manage_org_id,
+            manage_org_type,
+            manage_org.name as manage_org_name,
+            sba.create_by as create_by,
+            su.nick_name as create_by_nick_name,
+            sba.create_time as create_time
+        from sys_business_auth sba
+        left join sys_business sb on sb.business_id = sba.business_id
+        left join sys_user su on su.user_name = sba.create_by
+
+        left join (
+            SELECT user_id AS id, user_name AS name FROM sys_user WHERE del_flag = '0'
+            UNION ALL
+            SELECT dept_id AS id, dept_name AS name FROM sys_dept WHERE del_flag = '0'
+            UNION ALL
+            SELECT post_id AS id, post_name AS name FROM sys_post
+        ) AS org ON org.id = org_id
+
+        left join (
+            SELECT user_id AS id, user_name AS name FROM sys_user WHERE del_flag = '0'
+            UNION ALL
+            SELECT dept_id AS id, dept_name AS name FROM sys_dept WHERE del_flag = '0'
+        ) AS manage_org ON manage_org.id = manage_org_id
+
+    </sql>
+
+    <select id="selectBusinessAuthList" parameterType="SysBusinessAuth" resultMap="SysBusinessAuthResult">
+        <include refid="selectBusinessAuthVo"/>
+        <where>
+            <if test="id != null and id != 0">
+                AND id = #{id}
+            </if>
+            <if test="businessCode != null and businessCode != ''">
+                AND business_code = #{businessCode}
+            </if>
+            <if test="businessName != null and businessName != ''">
+                AND business_name = #{businessName}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                <!-- 如果传了currentOrg说明只查这个组织的数据 -->
+                <if test="currentOrg == true">
+                        AND org_id = #{orgId}
+                </if>
+                <!-- 如果没传则说明只查这个组织关联的所有数据 -->
+                <if test="currentOrg != true">
+                    <if test="orgType == 0">
+                        AND find_in_set(org_id, #{deptFullPathId})
+                    </if>
+                    <if test="orgType == 1">
+                        AND ((org_type = 1 AND org_id = #{orgId})
+                        OR  (org_type = 0 AND find_in_set(org_id, #{deptFullPathId}))
+                        OR  (org_type = 2 AND org_id in (select post_id from sys_user_post sup where sup.user_id = #{orgId})))
+                    </if>
+                    <if test="orgType == 2">
+                        AND org_id = #{orgId}
+                    </if>
+                </if>
+
+            </if>
+            <if test="manageOrgId != null and manageOrgId != ''">
+                AND manage_org_id = #{manageOrgId}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and sr.create_by = #{createBy}
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBusinessAuth" parameterType="List">
+        insert into sys_business_auth
+            (business_id, org_id, org_type, manage_org_id, manage_org_type, create_by, create_time)
+        VALUES
+        <foreach collection="list" separator="," item="item">
+            (#{item.businessId},
+             #{item.orgId},
+             #{item.orgType},
+             #{item.manageOrgId},
+             #{item.manageOrgType},
+             #{item.createBy},
+             sysdate())
+        </foreach>
+    </insert>
+
+    <delete id="deleteBusinessAuth" parameterType="List">
+        delete from sys_business_auth
+               where id in
+               <foreach collection="list" item="item" open="(" separator="," close=")"> #{id} </foreach>
+    </delete>
+
+<!--    <select id="getBusinessAuthListByUser" parameterType="SysUser" resultMap="SysBusinessAuthResult">-->
+<!--        <include refid="selectBusinessAuthVo"/>-->
+<!--        where (org_type = 1 AND org_id = #{userId}) OR (org_type = 0 AND find_in_set(org_id, #{deptFullPathId}))-->
+<!--    </select>-->
+
+</mapper>

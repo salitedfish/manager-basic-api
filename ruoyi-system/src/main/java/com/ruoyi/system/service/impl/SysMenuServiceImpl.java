@@ -8,6 +8,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.ruoyi.system.service.ISysRoleService;
+import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.constant.Constants;
@@ -44,14 +47,20 @@ public class SysMenuServiceImpl implements ISysMenuService
     @Autowired
     private SysRoleMenuMapper roleMenuMapper;
 
+    @Autowired
+    private ISysUserService userService;
+
+    @Autowired
+    private ISysRoleService roleService;
+
     /**
-     * 根据用户查询系统菜单列表
+     * 根据用户查询系统菜单列表（这个是包含用户所有的角色，且包含按钮节点）
      * 
      * @param userId 用户ID
      * @return 菜单列表
      */
     @Override
-    public List<SysMenu> selectMenuList(Long userId)
+    public List<SysMenu> selectMenuList(String userId)
     {
         return selectMenuList(new SysMenu(), userId);
     }
@@ -63,7 +72,7 @@ public class SysMenuServiceImpl implements ISysMenuService
      * @return 菜单列表
      */
     @Override
-    public List<SysMenu> selectMenuList(SysMenu menu, Long userId)
+    public List<SysMenu> selectMenuList(SysMenu menu, String userId)
     {
         List<SysMenu> menuList = null;
         // 管理员显示所有菜单信息
@@ -73,35 +82,41 @@ public class SysMenuServiceImpl implements ISysMenuService
         }
         else
         {
-            menu.getParams().put("userId", userId);
-            menuList = menuMapper.selectMenuListByUserId(menu);
+//            menu.getParams().put("userId", userId);
+//            menuList = menuMapper.selectMenuListByUserId(menu);
+
+            SysUser user = userService.selectUserById(userId);
+            Set<Long> roleIdSet = roleService.selectAllRolesIdByUser(user);
+            List<Long> roleIds = new ArrayList<>();
+            roleIds.addAll(roleIdSet);
+            menuList = menuMapper.selectMenuListByRoleIds(roleIds);
         }
         return menuList;
     }
 
-    /**
-     * 根据用户ID查询权限
-     * 
-     * @param userId 用户ID
-     * @return 权限列表
-     */
-    @Override
-    public Set<String> selectMenuPermsByUserId(Long userId)
-    {
-        List<String> perms = menuMapper.selectMenuPermsByUserId(userId);
-        Set<String> permsSet = new HashSet<>();
-        for (String perm : perms)
-        {
-            if (StringUtils.isNotEmpty(perm))
-            {
-                permsSet.addAll(Arrays.asList(perm.trim().split(",")));
-            }
-        }
-        return permsSet;
-    }
+//    /**
+//     * 根据用户ID查询权限
+//     *
+//     * @param userId 用户ID
+//     * @return 权限列表
+//     */
+//    @Override
+//    public Set<String> selectMenuPermsByUserId(String userId)
+//    {
+//        List<String> perms = menuMapper.selectMenuPermsByUserId(userId);
+//        Set<String> permsSet = new HashSet<>();
+//        for (String perm : perms)
+//        {
+//            if (StringUtils.isNotEmpty(perm))
+//            {
+//                permsSet.addAll(Arrays.asList(perm.trim().split(",")));
+//            }
+//        }
+//        return permsSet;
+//    }
 
     /**
-     * 根据角色ID查询权限
+     * 根据角色ID查询菜单权限（包含按钮节点）
      * 
      * @param roleId 角色ID
      * @return 权限列表
@@ -122,29 +137,8 @@ public class SysMenuServiceImpl implements ISysMenuService
     }
 
     /**
-     * 根据用户ID查询菜单
-     * 
-     * @param userId 用户名称
-     * @return 菜单列表
-     */
-    @Override
-    public List<SysMenu> selectMenuTreeByUserId(Long userId)
-    {
-        List<SysMenu> menus = null;
-        if (SecurityUtils.isAdmin(userId))
-        {
-            menus = menuMapper.selectMenuTreeAll();
-        }
-        else
-        {
-            menus = menuMapper.selectMenuTreeByUserId(userId);
-        }
-        return getChildPerms(menus, 0);
-    }
-
-    /**
-     * 根据角色ID查询菜单树信息
-     * 
+     * 根据角色ID查询菜单树信息（包含按钮节点）
+     *
      * @param roleId 角色ID
      * @return 选中菜单列表
      */
@@ -154,6 +148,54 @@ public class SysMenuServiceImpl implements ISysMenuService
         SysRole role = roleMapper.selectRoleById(roleId);
         return menuMapper.selectMenuListByRoleId(roleId, role.isMenuCheckStrictly());
     }
+
+//    /**
+//     * 根据用户ID查询菜单
+//     *
+//     * @param userId 用户名称
+//     * @return 菜单列表
+//     */
+//    @Override
+//    public List<SysMenu> selectMenuTreeByUserId(String userId)
+//    {
+//        List<SysMenu> menus = null;
+//        if (SecurityUtils.isAdmin(userId))
+//        {
+//            menus = menuMapper.selectMenuTreeAll();
+//        }
+//        else
+//        {
+//            menus = menuMapper.selectMenuTreeByUserId(userId);
+//        }
+//        return getChildPerms(menus, 0);
+//    }
+
+    /**
+     * 根据用户id查询全部的菜单树信息（这个是包含用户所有的角色，但不包含按钮节点）
+     * @param userId
+     * @return
+     */
+    public List<SysMenu> selectAllMenuTreeByUserId(String userId) {
+        List<SysMenu> menus = new ArrayList<>();
+        if (SecurityUtils.isAdmin(userId))
+        {
+            menus = menuMapper.selectMenuTreeAll();
+        }
+        else
+        {
+            SysUser user = userService.selectUserById(userId);
+            Set<Long> roleIdSet = roleService.selectAllRolesIdByUser(user);
+            List<Long> roleIds = new ArrayList<>();
+            roleIds.addAll(roleIdSet);
+            if(StringUtils.isNotEmpty(roleIds)) {
+                menus = menuMapper.selectMenuTreeByRoleIds(roleIds);
+            }
+        }
+        return getChildPerms(menus, 0);
+
+    };
+
+
 
     /**
      * 构建前端路由所需要的菜单

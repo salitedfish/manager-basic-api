@@ -1,6 +1,15 @@
 package com.ruoyi.web.controller.system;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.TreeSelect;
+import com.ruoyi.common.core.domain.entity.SysBusiness;
+import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.system.domain.SysDeptRole;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,6 +36,7 @@ import com.ruoyi.system.service.ISysDeptService;
  * 
  * @author ruoyi
  */
+@Api("部门管理")
 @RestController
 @RequestMapping("/system/dept")
 public class SysDeptController extends BaseController
@@ -37,6 +47,7 @@ public class SysDeptController extends BaseController
     /**
      * 获取部门列表
      */
+    @ApiOperation("获取部门列表")
     @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @GetMapping("/list")
     public AjaxResult list(SysDept dept)
@@ -48,21 +59,24 @@ public class SysDeptController extends BaseController
     /**
      * 查询部门列表（排除节点）
      */
+    @ApiOperation("查询部门列表（排除节点）")
     @PreAuthorize("@ss.hasPermi('system:dept:list')")
     @GetMapping("/list/exclude/{deptId}")
-    public AjaxResult excludeChild(@PathVariable(value = "deptId", required = false) Long deptId)
+    public AjaxResult excludeChild(@PathVariable(value = "deptId", required = false) String deptId)
     {
         List<SysDept> depts = deptService.selectDeptList(new SysDept());
-        depts.removeIf(d -> d.getDeptId().intValue() == deptId || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + ""));
+        depts.removeIf(d -> d.getDeptId().equals(deptId) || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + ""));
         return success(depts);
     }
 
     /**
      * 根据部门编号获取详细信息
      */
+
+    @ApiOperation("根据部门编号获取详细信息")
     @PreAuthorize("@ss.hasPermi('system:dept:query')")
     @GetMapping(value = "/{deptId}")
-    public AjaxResult getInfo(@PathVariable Long deptId)
+    public AjaxResult getInfo(@PathVariable String deptId)
     {
         deptService.checkDeptDataScope(deptId);
         return success(deptService.selectDeptById(deptId));
@@ -71,6 +85,7 @@ public class SysDeptController extends BaseController
     /**
      * 新增部门
      */
+    @ApiOperation("新增部门")
     @PreAuthorize("@ss.hasPermi('system:dept:add')")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -87,12 +102,13 @@ public class SysDeptController extends BaseController
     /**
      * 修改部门
      */
+    @ApiOperation("修改部门")
     @PreAuthorize("@ss.hasPermi('system:dept:edit')")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysDept dept)
     {
-        Long deptId = dept.getDeptId();
+        String deptId = dept.getDeptId();
         deptService.checkDeptDataScope(deptId);
         if (!deptService.checkDeptNameUnique(dept))
         {
@@ -113,10 +129,11 @@ public class SysDeptController extends BaseController
     /**
      * 删除部门
      */
+    @ApiOperation("删除")
     @PreAuthorize("@ss.hasPermi('system:dept:remove')")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{deptId}")
-    public AjaxResult remove(@PathVariable Long deptId)
+    public AjaxResult remove(@PathVariable String deptId)
     {
         if (deptService.hasChildByDeptId(deptId))
         {
@@ -128,5 +145,44 @@ public class SysDeptController extends BaseController
         }
         deptService.checkDeptDataScope(deptId);
         return toAjax(deptService.deleteDeptById(deptId));
+    }
+
+    /**
+     * 获取包含人员的部门树
+     */
+    @ApiOperation("查询包含人员的部门树")
+    @GetMapping("/treeWithUser")
+    public AjaxResult selectDeptTreeListWithUser(SysDept dept)
+    {
+        List<TreeSelect> list = deptService.selectDeptTreeListWithUser(dept);
+        return success(list);
+    }
+
+    @ApiOperation("查询部门关联的角色列表")
+    @GetMapping("/role/list")
+    public TableDataInfo selectDeptRoleList(SysDeptRole sdr) {
+        startPage();
+        List<SysRole> list = deptService.selectRoleListByDept(sdr);
+        return getDataTable(list);
+    }
+
+    @ApiOperation("新增部门关联的角色列表")
+    @Log(title = "部门管理", businessType = BusinessType.INSERT)
+    @PostMapping("/role/add")
+    public AjaxResult insertDeptRoleList(@RequestBody SysDeptRole sdr) {
+        if(StringUtils.isEmpty(sdr.getRoleIds())) {
+            return error("列表不能为空");
+        }
+        return toAjax(deptService.insertDeptRole(sdr));
+    }
+
+    @ApiOperation("删除部门关联的角色")
+    @Log(title = "部门管理", businessType = BusinessType.DELETE)
+    @DeleteMapping("/role/delete")
+    public AjaxResult deleteDeptRoleList(@RequestBody SysDeptRole sdr) {
+        if(StringUtils.isEmpty(sdr.getRoleIds())) {
+            return error("列表不能为空");
+        }
+        return toAjax(deptService.deleteDeptRoleList(sdr));
     }
 }

@@ -3,11 +3,15 @@ package com.ruoyi.system.domain;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.ruoyi.common.core.domain.entity.SysRole;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.ruoyi.common.core.domain.BaseEntity;
+
+import java.util.List;
 
 /**
  * 岗位表 sys_post
@@ -20,7 +24,7 @@ public class SysPost extends BaseEntity
 
     /** 岗位序号 */
     @Excel(name = "岗位序号", cellType = ColumnType.NUMERIC)
-    private Long postId;
+    private String postId;
 
     /** 岗位编码 */
     @Excel(name = "岗位编码")
@@ -41,12 +45,34 @@ public class SysPost extends BaseEntity
     /** 用户是否存在此岗位标识 默认不存在 */
     private boolean flag = false;
 
-    public Long getPostId()
+    /** 岗位关联的角色id列表 */
+    private List<Long> roleIds;
+
+    /** 岗位关联的角色列表 */
+    private  List<SysRole> roles;
+
+    public List<SysRole> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<SysRole> roles) {
+        this.roles = roles;
+    }
+
+    public List<Long> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(List<Long> roleIds) {
+        this.roleIds = roleIds;
+    }
+
+    public String getPostId()
     {
         return postId;
     }
 
-    public void setPostId(Long postId)
+    public void setPostId(String postId)
     {
         this.postId = postId;
     }
@@ -105,7 +131,8 @@ public class SysPost extends BaseEntity
     {
         this.flag = flag;
     }
-    
+
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)

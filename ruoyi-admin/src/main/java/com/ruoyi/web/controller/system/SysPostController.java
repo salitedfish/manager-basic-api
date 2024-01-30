@@ -2,6 +2,13 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysDeptRole;
+import com.ruoyi.system.domain.SysPostRole;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +34,7 @@ import com.ruoyi.system.service.ISysPostService;
  * 
  * @author ruoyi
  */
+@Api("岗位管理")
 @RestController
 @RequestMapping("/system/post")
 public class SysPostController extends BaseController
@@ -37,6 +45,7 @@ public class SysPostController extends BaseController
     /**
      * 获取岗位列表
      */
+    @ApiOperation("获取岗位列表")
     @PreAuthorize("@ss.hasPermi('system:post:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysPost post)
@@ -45,7 +54,8 @@ public class SysPostController extends BaseController
         List<SysPost> list = postService.selectPostList(post);
         return getDataTable(list);
     }
-    
+
+    @ApiOperation("导出岗位列表")
     @Log(title = "岗位管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:post:export')")
     @PostMapping("/export")
@@ -59,9 +69,10 @@ public class SysPostController extends BaseController
     /**
      * 根据岗位编号获取详细信息
      */
+    @ApiOperation("根据岗位编号获取详细信息")
     @PreAuthorize("@ss.hasPermi('system:post:query')")
     @GetMapping(value = "/{postId}")
-    public AjaxResult getInfo(@PathVariable Long postId)
+    public AjaxResult getInfo(@PathVariable String postId)
     {
         return success(postService.selectPostById(postId));
     }
@@ -69,6 +80,7 @@ public class SysPostController extends BaseController
     /**
      * 新增岗位
      */
+    @ApiOperation("新增岗位")
     @PreAuthorize("@ss.hasPermi('system:post:add')")
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -89,6 +101,7 @@ public class SysPostController extends BaseController
     /**
      * 修改岗位
      */
+    @ApiOperation("修改岗位")
     @PreAuthorize("@ss.hasPermi('system:post:edit')")
     @Log(title = "岗位管理", businessType = BusinessType.UPDATE)
     @PutMapping
@@ -109,10 +122,11 @@ public class SysPostController extends BaseController
     /**
      * 删除岗位
      */
+    @ApiOperation("删除岗位")
     @PreAuthorize("@ss.hasPermi('system:post:remove')")
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{postIds}")
-    public AjaxResult remove(@PathVariable Long[] postIds)
+    public AjaxResult remove(@PathVariable String[] postIds)
     {
         return toAjax(postService.deletePostByIds(postIds));
     }
@@ -125,5 +139,33 @@ public class SysPostController extends BaseController
     {
         List<SysPost> posts = postService.selectPostAll();
         return success(posts);
+    }
+
+    @ApiOperation("查询岗位关联的角色列表")
+    @GetMapping("/role/list")
+    public TableDataInfo selectPostRoleList(SysPostRole spr) {
+        startPage();
+        List<SysRole> list = postService.selectRoleListByPost(spr);
+        return getDataTable(list);
+    }
+
+    @ApiOperation("新增岗位关联的角色列表")
+    @Log(title = "岗位管理", businessType = BusinessType.INSERT)
+    @PostMapping("/role/add")
+    public AjaxResult insertPostRoleList(@RequestBody SysPostRole spr) {
+        if(StringUtils.isEmpty(spr.getRoleIds())) {
+            return error("角色列表不能为空");
+        }
+        return toAjax(postService.insertPostRoleList(spr));
+    }
+
+    @ApiOperation("删除岗位关联的角色")
+    @Log(title = "岗位管理", businessType = BusinessType.DELETE)
+    @DeleteMapping("/role/delete")
+    public AjaxResult deletePostRoleList(@RequestBody SysPostRole spr) {
+        if(StringUtils.isEmpty(spr.getRoleIds())) {
+            return error("角色列表不能为空");
+        }
+        return toAjax(postService.deletePostRoleList(spr));
     }
 }

@@ -1,10 +1,12 @@
 package com.ruoyi.common.core.domain.model;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -19,12 +21,12 @@ public class LoginUser implements UserDetails
     /**
      * 用户ID
      */
-    private Long userId;
+    private String userId;
 
     /**
      * 部门ID
      */
-    private Long deptId;
+    private String deptId;
 
     /**
      * 用户唯一标识
@@ -67,6 +69,11 @@ public class LoginUser implements UserDetails
     private Set<String> permissions;
 
     /**
+     * 数据权限列表
+     */
+    private List<SysBusinessAuth> businessAuthList;
+
+    /**
      * 用户信息
      */
     private SysUser user;
@@ -81,7 +88,7 @@ public class LoginUser implements UserDetails
         this.permissions = permissions;
     }
 
-    public LoginUser(Long userId, Long deptId, SysUser user, Set<String> permissions)
+    public LoginUser(String userId, String deptId, SysUser user, Set<String> permissions)
     {
         this.userId = userId;
         this.deptId = deptId;
@@ -89,22 +96,31 @@ public class LoginUser implements UserDetails
         this.permissions = permissions;
     }
 
-    public Long getUserId()
+    public LoginUser(String userId, String deptId, SysUser user, Set<String> permissions, List<SysBusinessAuth> businessAuthList)
+    {
+        this.userId = userId;
+        this.deptId = deptId;
+        this.user = user;
+        this.permissions = permissions;
+        this.businessAuthList = businessAuthList;
+    }
+
+    public String getUserId()
     {
         return userId;
     }
 
-    public void setUserId(Long userId)
+    public void setUserId(String userId)
     {
         this.userId = userId;
     }
 
-    public Long getDeptId()
+    public String getDeptId()
     {
         return deptId;
     }
 
-    public void setDeptId(Long deptId)
+    public void setDeptId(String deptId)
     {
         this.deptId = deptId;
     }
@@ -256,6 +272,14 @@ public class LoginUser implements UserDetails
     public void setUser(SysUser user)
     {
         this.user = user;
+    }
+
+    public List<SysBusinessAuth> getBusinessAuthList() {
+        return businessAuthList;
+    }
+
+    public void setBusinessAuthList(List<SysBusinessAuth> businessAuthList) {
+        this.businessAuthList = businessAuthList;
     }
 
     @Override

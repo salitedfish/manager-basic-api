@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="postId"     column="post_id"      />
 	</resultMap>
 
-	<delete id="deleteUserPostByUserId" parameterType="Long">
+	<delete id="deleteUserPostByUserId" parameterType="String">
 		delete from sys_user_post where user_id=#{userId}
 	</delete>
 	

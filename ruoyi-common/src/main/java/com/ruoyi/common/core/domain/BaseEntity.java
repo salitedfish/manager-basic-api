@@ -21,8 +21,11 @@ public class BaseEntity implements Serializable
     @JsonIgnore
     private String searchValue;
 
-    /** 创建者 */
+    /** 创建者账号 */
     private String createBy;
+
+    /** 创建者昵称 */
+    private String createByNickName;
 
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -30,6 +33,9 @@ public class BaseEntity implements Serializable
 
     /** 更新者 */
     private String updateBy;
+
+    /** 更新者昵称 */
+    private String updateByNickName;
 
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -50,6 +56,22 @@ public class BaseEntity implements Serializable
     public void setSearchValue(String searchValue)
     {
         this.searchValue = searchValue;
+    }
+
+    public String getCreateByNickName() {
+        return createByNickName;
+    }
+
+    public void setCreateByNickName(String createByNickName) {
+        this.createByNickName = createByNickName;
+    }
+
+    public String getUpdateByNickName() {
+        return updateByNickName;
+    }
+
+    public void setUpdateByNickName(String updateByNickName) {
+        this.updateByNickName = updateByNickName;
     }
 
     public String getCreateBy()

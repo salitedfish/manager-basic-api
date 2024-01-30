@@ -1,6 +1,15 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.system.domain.SysDeptRole;
+import com.ruoyi.system.domain.SysPostRole;
+import com.ruoyi.system.mapper.SysRoleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.common.constant.UserConstants;
@@ -24,6 +33,9 @@ public class SysPostServiceImpl implements ISysPostService
 
     @Autowired
     private SysUserPostMapper userPostMapper;
+
+    @Autowired
+    private SysRoleMapper roleMapper;
 
     /**
      * 查询岗位信息集合
@@ -55,9 +67,14 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 角色对象信息
      */
     @Override
-    public SysPost selectPostById(Long postId)
+    public SysPost selectPostById(String postId)
     {
-        return postMapper.selectPostById(postId);
+        SysPost sp = postMapper.selectPostById(postId);
+        SysPostRole spr = new SysPostRole();
+        spr.setPostId(postId);
+        List<SysRole> roles = selectRoleListByPost(spr);
+        sp.setRoles(roles);
+        return sp;
     }
 
     /**
@@ -67,7 +84,7 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 选中岗位ID列表
      */
     @Override
-    public List<Long> selectPostListByUserId(Long userId)
+    public List<String> selectPostListByUserId(String userId)
     {
         return postMapper.selectPostListByUserId(userId);
     }
@@ -81,9 +98,9 @@ public class SysPostServiceImpl implements ISysPostService
     @Override
     public boolean checkPostNameUnique(SysPost post)
     {
-        Long postId = StringUtils.isNull(post.getPostId()) ? -1L : post.getPostId();
+        String postId = StringUtils.isNull(post.getPostId()) ? "" : post.getPostId();
         SysPost info = postMapper.checkPostNameUnique(post.getPostName());
-        if (StringUtils.isNotNull(info) && info.getPostId().longValue() != postId.longValue())
+        if (StringUtils.isNotNull(info) && (!info.getPostId().equals(postId)))
         {
             return UserConstants.NOT_UNIQUE;
         }
@@ -99,9 +116,9 @@ public class SysPostServiceImpl implements ISysPostService
     @Override
     public boolean checkPostCodeUnique(SysPost post)
     {
-        Long postId = StringUtils.isNull(post.getPostId()) ? -1L : post.getPostId();
+        String postId = StringUtils.isNull(post.getPostId()) ? "" : post.getPostId();
         SysPost info = postMapper.checkPostCodeUnique(post.getPostCode());
-        if (StringUtils.isNotNull(info) && info.getPostId().longValue() != postId.longValue())
+        if (StringUtils.isNotNull(info) && (!info.getPostId().equals(postId)))
         {
             return UserConstants.NOT_UNIQUE;
         }
@@ -115,7 +132,7 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 结果
      */
     @Override
-    public int countUserPostById(Long postId)
+    public int countUserPostById(String postId)
     {
         return userPostMapper.countUserPostById(postId);
     }
@@ -127,7 +144,7 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 结果
      */
     @Override
-    public int deletePostById(Long postId)
+    public int deletePostById(String postId)
     {
         return postMapper.deletePostById(postId);
     }
@@ -139,9 +156,9 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 结果
      */
     @Override
-    public int deletePostByIds(Long[] postIds)
+    public int deletePostByIds(String[] postIds)
     {
-        for (Long postId : postIds)
+        for (String postId : postIds)
         {
             SysPost post = selectPostById(postId);
             if (countUserPostById(postId) > 0)
@@ -161,6 +178,9 @@ public class SysPostServiceImpl implements ISysPostService
     @Override
     public int insertPost(SysPost post)
     {
+        post.setPostId(IdUtils.fastUUID());
+        // 新增岗位关联角色
+//        insertPostRole(post);
         return postMapper.insertPost(post);
     }
 
@@ -173,6 +193,64 @@ public class SysPostServiceImpl implements ISysPostService
     @Override
     public int updatePost(SysPost post)
     {
+        // 删除岗位关联角色
+//        deletePostRole(post);
+        // 新增岗位关联角色
+//        insertPostRole(post);
+
         return postMapper.updatePost(post);
     }
+
+    /**
+     * 新增岗位关联角色
+     * @param spr
+     */
+    public int insertPostRoleList(SysPostRole spr) {
+
+        List<SysPostRole> sdrs = new ArrayList<>();
+            for(Long roleId: spr.getRoleIds()) {
+                SysPostRole sdr = new SysPostRole();
+                sdr.setPostId(spr.getPostId());
+                sdr.setRoleId(roleId);
+                sdr.setCreateBy(SecurityUtils.getLoginUser().getUser().getUserName());
+                // 先判断之前有没有同样的数据
+                // 如果没有再新增
+                sdrs.add(sdr);
+            }
+           return postMapper.insertPostRole(sdrs);
+    };
+
+    /**
+     * 删除岗位和全部角色的关联
+     * @param post
+     */
+    public void deletePostRole(SysPost post) {
+        postMapper.deletePostRole(post);
+    };
+
+    /**
+     * 通过角色id删除岗位关联的角色
+     * @param sdr
+     */
+    public int deletePostRoleList(SysPostRole sdr) {
+        List<SysPostRole> sdrs = new ArrayList<>();
+        for(Long roleId: sdr.getRoleIds()) {
+            SysPostRole sd = new SysPostRole();
+            sd.setPostId(sdr.getPostId());
+            sd.setRoleId(roleId);
+            sdrs.add(sd);
+        }
+        return postMapper.deletePostRoleList(sdrs);
+
+    };
+
+
+    /**
+     * 查询岗位对应的角色列表
+     * @param spr
+     * @return
+     */
+    public List<SysRole> selectRoleListByPost(SysPostRole spr) {
+        return postMapper.selectRoleListByPost(spr);
+    };
 }

@@ -2,7 +2,10 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.common.core.domain.TreeSelect;
+import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.system.domain.SysDeptRole;
 
 /**
  * 部门管理 服务层
@@ -26,6 +29,13 @@ public interface ISysDeptService
      * @return 部门树信息集合
      */
     public List<TreeSelect> selectDeptTreeList(SysDept dept);
+
+    /**
+     * 获取包含人员的部门树
+     * @param dept
+     * @return
+     */
+    public List<TreeSelect> selectDeptTreeListWithUser(SysDept dept);
 
     /**
      * 构建前端所需要树结构
@@ -57,7 +67,7 @@ public interface ISysDeptService
      * @param deptId 部门ID
      * @return 部门信息
      */
-    public SysDept selectDeptById(Long deptId);
+    public SysDept selectDeptById(String deptId);
 
     /**
      * 根据ID查询所有子部门（正常状态）
@@ -65,7 +75,7 @@ public interface ISysDeptService
      * @param deptId 部门ID
      * @return 子部门数
      */
-    public int selectNormalChildrenDeptById(Long deptId);
+    public int selectNormalChildrenDeptById(String deptId);
 
     /**
      * 是否存在部门子节点
@@ -73,7 +83,7 @@ public interface ISysDeptService
      * @param deptId 部门ID
      * @return 结果
      */
-    public boolean hasChildByDeptId(Long deptId);
+    public boolean hasChildByDeptId(String deptId);
 
     /**
      * 查询部门是否存在用户
@@ -81,7 +91,7 @@ public interface ISysDeptService
      * @param deptId 部门ID
      * @return 结果 true 存在 false 不存在
      */
-    public boolean checkDeptExistUser(Long deptId);
+    public boolean checkDeptExistUser(String deptId);
 
     /**
      * 校验部门名称是否唯一
@@ -96,7 +106,7 @@ public interface ISysDeptService
      * 
      * @param deptId 部门id
      */
-    public void checkDeptDataScope(Long deptId);
+    public void checkDeptDataScope(String deptId);
 
     /**
      * 新增保存部门信息
@@ -120,5 +130,30 @@ public interface ISysDeptService
      * @param deptId 部门ID
      * @return 结果
      */
-    public int deleteDeptById(Long deptId);
+    public int deleteDeptById(String deptId);
+
+    /**
+     * 新增部门关联角色
+     * @param dept
+     */
+    public int insertDeptRole(SysDeptRole dept);
+
+    /**
+     * 删除全部部门关联角色
+     * @param dept
+     */
+    public void deleteDeptRole(SysDept dept);
+
+    /**
+     * 通过角色id删除部门关联的角色
+     * @param sdr
+     */
+    public int deleteDeptRoleList(SysDeptRole sdr);
+
+    /**
+     * 通过部门查询关联的角色列表
+     * @param sdr
+     * @return
+     */
+    public List<SysRole> selectRoleListByDept(SysDeptRole sdr);
 }

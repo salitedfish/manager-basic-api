@@ -72,7 +72,9 @@ public class SysMenuController extends BaseController
     {
         List<SysMenu> menus = menuService.selectMenuList(getUserId());
         AjaxResult ajax = AjaxResult.success();
+        // 这个是查找菜单树中勾选了哪些菜单
         ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
+        // 这个显示的菜单是根据用户能够显示哪些菜单来显示的
         ajax.put("menus", menuService.buildMenuTreeSelect(menus));
         return ajax;
     }
