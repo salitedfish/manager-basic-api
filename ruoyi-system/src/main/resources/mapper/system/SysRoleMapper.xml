@@ -148,4 +148,27 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			#{roleId}
         </foreach> 
  	</delete>
+
+	<select id="selectALLRolesByUser" parameterType="SysUser" resultMap="SysRoleResult">
+		select distinct sr.role_id, sr.role_name, sr.role_key, sr.role_sort, sr.data_scope, sr.menu_check_strictly, sr.dept_check_strictly,
+		sr.status, sr.del_flag, sr.create_time, sr.remark
+		from sys_user su
+		left join sys_user_role sur on su.user_id = sur.user_id
+
+		left join sys_dept sd on su.dept_id = sd.dept_id
+		    left join sys_dept_role sdr on find_in_set(sdr.dept_id, sd.ancestors)
+
+		left join sys_user_post sup on su.user_id = sup.user_id
+		    left join sys_post_role spr on sup.post_id = spr.post_id
+		left join sys_role sr on (sr.role_id in (sur.role_id, sdr.role_id, spr.role_id))
+
+		<where>
+			<if test="userId != null and userId != ''" >
+				and su.user_id = #{userId}
+			</if>
+			<if test="userName != null and userName != ''" >
+				and su.user_name = #{userName}
+			</if>
+		</where>
+	</select>
 </mapper> 

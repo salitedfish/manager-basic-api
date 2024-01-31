@@ -104,30 +104,7 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Override
     public List<SysRole> selectALLRolesByUser(SysUser user) {
 
-        List<SysRole> roles = roleMapper.selectRolePermissionByUserId(user.getUserId());
-
-        // 获取用户部门路径上的所有角色
-        String deptFullPathId = user.getDeptFullPathId();
-        String[] deptIds = deptFullPathId.split(",");
-        if(StringUtils.isNotEmpty(deptIds)) {
-            for(String deptId: deptIds) {
-                SysDeptRole sdr = new SysDeptRole();
-                sdr.setDeptId(deptId);
-                List<SysRole> srs = deptService.selectRoleListByDept(sdr);
-                roles.addAll(srs);
-            }
-        }
-
-        // 获取用户所有岗位上的所有角色
-        List<String> postIds = postService.selectPostListByUserId(user.getUserId());
-        if(StringUtils.isNotEmpty(postIds)) {
-            for(String postId: postIds) {
-                SysPostRole spr = new SysPostRole();
-                spr.setPostId(postId);
-                List<SysRole> srs = postService.selectRoleListByPost(spr);
-                roles.addAll(srs);
-            }
-        }
+        List<SysRole> roles = roleMapper.selectALLRolesByUser(user);
 
         // 角色列表去重
         List<SysRole> rolesNoRepeat = new ArrayList<>();
