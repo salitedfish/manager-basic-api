@@ -108,19 +108,20 @@ public class SysRoleServiceImpl implements ISysRoleService
 
         // 角色列表去重
         List<SysRole> rolesNoRepeat = new ArrayList<>();
-        for(SysRole sr: roles) {
-            boolean repeat = false;
-            for(SysRole sr1: rolesNoRepeat) {
-                if(sr1.getRoleId().longValue() == sr.getRoleId().longValue()) {
-                    repeat = true;
-                    break;
+        if(StringUtils.isNotNull(roles)) {
+            for(SysRole sr: roles) {
+                boolean repeat = false;
+                for(SysRole sr1: rolesNoRepeat) {
+                    if(sr1.getRoleId().longValue() == sr.getRoleId().longValue()) {
+                        repeat = true;
+                        break;
+                    }
+                }
+                if(!repeat) {
+                    rolesNoRepeat.add(sr);
                 }
             }
-            if(!repeat) {
-                rolesNoRepeat.add(sr);
-            }
         }
-
 
         return rolesNoRepeat;
 

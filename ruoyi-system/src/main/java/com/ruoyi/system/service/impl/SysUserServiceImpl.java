@@ -266,7 +266,7 @@ public class SysUserServiceImpl implements ISysUserService
     public int insertUser(SysUser user)
     {
         // 新增用户信息
-        user.setUserId(IdUtils.fastUUID());
+        user.setUserId(IdUtils.shortUUID());
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
         insertUserPost(user);

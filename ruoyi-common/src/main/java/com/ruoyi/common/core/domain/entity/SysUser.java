@@ -129,7 +129,7 @@ public class SysUser extends BaseEntity
 
     public static boolean isAdmin(String userId)
     {
-        return userId != null && userId.equals("1");
+        return userId != null && userId.equals("100000010001000100010000000000");
     }
 
     public String getDeptId()

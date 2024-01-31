@@ -102,6 +102,13 @@ public interface ISysDeptService
     public boolean checkDeptNameUnique(SysDept dept);
 
     /**
+     * 校验部门编码是否唯一
+     * @param dept
+     * @return
+     */
+    public boolean checkDeptCodeUnique(SysDept dept);
+
+    /**
      * 校验部门是否有数据权限
      * 
      * @param deptId 部门id

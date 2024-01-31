@@ -180,7 +180,7 @@ public class SysPostServiceImpl implements ISysPostService
     @Override
     public int insertPost(SysPost post)
     {
-        post.setPostId(IdUtils.fastUUID());
+        post.setPostId(IdUtils.shortUUID());
         // 新增岗位关联角色
 //        insertPostRole(post);
         return postMapper.insertPost(post);

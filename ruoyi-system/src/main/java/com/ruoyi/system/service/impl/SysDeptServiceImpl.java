@@ -229,6 +229,20 @@ public class SysDeptServiceImpl implements ISysDeptService
     }
 
     /**
+     * 校验部门编码是否唯一
+     * @param dept
+     * @return
+     */
+    public boolean checkDeptCodeUnique(SysDept dept) {
+        SysDept info = deptMapper.checkDeptCodeUnique(dept.getDeptCode());
+        if (StringUtils.isNotNull(info))
+        {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
+    };
+
+    /**
      * 校验部门是否有数据权限
      * 
      * @param deptId 部门id
@@ -264,7 +278,7 @@ public class SysDeptServiceImpl implements ISysDeptService
             throw new ServiceException("部门停用，不允许新增");
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
-        dept.setDeptId(IdUtils.fastUUID());
+        dept.setDeptId(IdUtils.shortUUID());
 
         // 新增部门关联角色
 //        insertDeptRole(dept);

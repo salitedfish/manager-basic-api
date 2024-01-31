@@ -22,6 +22,9 @@ public class SysDept extends BaseEntity
     /** 部门ID */
     private String deptId;
 
+    /** 部门编码 */
+    private String deptCode;
+
     /** 父部门ID */
     private String parentId;
 
@@ -60,6 +63,35 @@ public class SysDept extends BaseEntity
 
     /** 部门关联的角色列表*/
     private List<SysRole> roles;
+
+    @Override
+    public String toString() {
+        return "SysDept{" +
+                "deptId='" + deptId + '\'' +
+                ", deptCode='" + deptCode + '\'' +
+                ", parentId='" + parentId + '\'' +
+                ", ancestors='" + ancestors + '\'' +
+                ", deptName='" + deptName + '\'' +
+                ", orderNum=" + orderNum +
+                ", leader='" + leader + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", status='" + status + '\'' +
+                ", delFlag='" + delFlag + '\'' +
+                ", parentName='" + parentName + '\'' +
+                ", children=" + children +
+                ", roleIds=" + roleIds +
+                ", roles=" + roles +
+                '}';
+    }
+
+    public String getDeptCode() {
+        return deptCode;
+    }
+
+    public void setDeptCode(String deptCode) {
+        this.deptCode = deptCode;
+    }
 
     public List<SysRole> getRoles() {
         return roles;
@@ -203,22 +235,4 @@ public class SysDept extends BaseEntity
         this.children = children;
     }
 
-    @Override
-    public String toString() {
-        return "SysDept{" +
-                "deptId='" + deptId + '\'' +
-                ", parentId='" + parentId + '\'' +
-                ", ancestors='" + ancestors + '\'' +
-                ", deptName='" + deptName + '\'' +
-                ", orderNum=" + orderNum +
-                ", leader='" + leader + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", status='" + status + '\'' +
-                ", delFlag='" + delFlag + '\'' +
-                ", parentName='" + parentName + '\'' +
-                ", children=" + children +
-                ", roleIds=" + roleIds +
-                '}';
-    }
 }

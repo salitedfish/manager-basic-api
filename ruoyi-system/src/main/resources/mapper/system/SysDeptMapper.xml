@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<resultMap type="SysDept" id="SysDeptResult">
 		<id     property="deptId"     column="dept_id"     />
+		<id     property="deptCode"     column="dept_code" />
 		<result property="parentId"   column="parent_id"   />
 		<result property="ancestors"  column="ancestors"   />
 		<result property="deptName"   column="dept_name"   />
@@ -40,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectDeptVo">
-        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time 
+        select d.dept_id, d.dept_code, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
         from sys_dept d
     </sql>
     
@@ -55,6 +56,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<if test="deptName != null and deptName != ''">
 			AND dept_name like concat('%', #{deptName}, '%')
+		</if>
+		<if test="deptCode != null and deptCode != ''">
+			AND dept_code like concat('%', #{deptCode}, '%')
 		</if>
 		<if test="status != null and status != ''">
 			AND status = #{status}
@@ -102,6 +106,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="checkDeptNameUnique" resultMap="SysDeptResult">
 	    <include refid="selectDeptVo"/>
 		where dept_name=#{deptName} and parent_id = #{parentId} and del_flag = '0' limit 1
+	</select>
+
+	<select id="checkDeptCodeUnique" parameterType="String" resultMap="SysDeptResult">
+		<include refid="selectDeptVo"/>
+		where dept_code=#{deptCode} and del_flag = '0' limit 1
 	</select>
     
     <insert id="insertDept" parameterType="SysDept">

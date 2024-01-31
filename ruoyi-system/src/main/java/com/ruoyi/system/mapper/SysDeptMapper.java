@@ -81,6 +81,13 @@ public interface SysDeptMapper
     public SysDept checkDeptNameUnique(@Param("deptName") String deptName, @Param("parentId") String parentId);
 
     /**
+     * 校验部门code是否已存在
+     * @param deptCode
+     * @return
+     */
+    public SysDept checkDeptCodeUnique(String deptCode);
+
+    /**
      * 新增部门信息
      * 
      * @param dept 部门信息

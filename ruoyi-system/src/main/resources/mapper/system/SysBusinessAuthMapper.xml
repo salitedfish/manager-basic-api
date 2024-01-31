@@ -11,9 +11,11 @@
         <result property="businessName"  column="business_name"      />
         <result property="orgId"     column="org_id"    />
         <result property="orgType"       column="org_type"      />
+        <result property="orgCode"       column="org_code"      />
         <result property="orgName"       column="org_name"      />
         <result property="manageOrgId"       column="manage_org_id"      />
         <result property="manageOrgType"       column="manage_org_type"      />
+        <result property="manageOrgCode"       column="manage_org_code"      />
         <result property="manageOrgName"       column="manage_org_name"      />
         <result property="createBy"       column="create_by"      />
         <result property="createByNickName"       column="create_by_nick_name"      />
@@ -28,11 +30,13 @@
             sba.business_id as business_id,
             sb.business_code as business_code,
             sb.business_name as business_name,
-            org_id,
+            org.id as org_id,
             org_type,
+            org.code as org_code,
             org.name as org_name,
             manage_org_id,
             manage_org_type,
+            manage_org.code as manage_org_code,
             manage_org.name as manage_org_name,
             sba.create_by as create_by,
             su.nick_name as create_by_nick_name,
@@ -42,17 +46,17 @@
         left join sys_user su on su.user_name = sba.create_by
 
         left join (
-            SELECT user_id AS id, user_name AS name FROM sys_user WHERE del_flag = '0'
+            SELECT user_id AS id, user_name AS code, nick_name AS name FROM sys_user WHERE del_flag = '0'
             UNION ALL
-            SELECT dept_id AS id, dept_name AS name FROM sys_dept WHERE del_flag = '0'
+            SELECT dept_id AS id, dept_code AS code, dept_name AS name FROM sys_dept WHERE del_flag = '0'
             UNION ALL
-            SELECT post_id AS id, post_name AS name FROM sys_post
-        ) AS org ON org.id = org_id
+            SELECT post_id AS id, post_code AS code, post_name AS name FROM sys_post
+        ) AS org ON org.id = sba.org_id
 
         left join (
-            SELECT user_id AS id, user_name AS name FROM sys_user WHERE del_flag = '0'
+            SELECT user_id AS id, user_name AS code, nick_name AS name FROM sys_user WHERE del_flag = '0'
             UNION ALL
-            SELECT dept_id AS id, dept_name AS name FROM sys_dept WHERE del_flag = '0'
+            SELECT dept_id AS id, dept_code AS code, dept_name AS name FROM sys_dept WHERE del_flag = '0'
         ) AS manage_org ON manage_org.id = manage_org_id
 
     </sql>
@@ -80,9 +84,9 @@
                         AND find_in_set(org_id, #{deptFullPathId})
                     </if>
                     <if test="orgType == 1">
-                        AND ((org_type = 1 AND org_id = #{orgId})
-                        OR  (org_type = 0 AND find_in_set(org_id, #{deptFullPathId}))
-                        OR  (org_type = 2 AND org_id in (select post_id from sys_user_post sup where sup.user_id = #{orgId})))
+                        AND ((org_type = 1 AND sba.org_id = #{orgId})
+                        OR  (org_type = 0 AND find_in_set(sba.org_id, #{deptFullPathId}))
+                        OR  (org_type = 2 AND sba.org_id in (select post_id from sys_user_post sup where sup.user_id = #{orgId})))
                     </if>
                     <if test="orgType == 2">
                         AND org_id = #{orgId}

@@ -26,6 +26,11 @@ public class SysBusinessAuth extends BaseEntity {
     private String orgId;
 
     /**
+     * 组织编码
+     */
+    private String orgCode;
+
+    /**
      * 组织类型
      * 0：部门，1: 人员, 2: 岗位
      */
@@ -40,6 +45,11 @@ public class SysBusinessAuth extends BaseEntity {
      * 管理的组织id
      */
     private String manageOrgId;
+
+    /**
+     * 组织编码
+     */
+    private String manageOrgCode;
 
     /**
      * 管理的组织类型
@@ -69,14 +79,32 @@ public class SysBusinessAuth extends BaseEntity {
                 ", businessCode='" + businessCode + '\'' +
                 ", businessName='" + businessName + '\'' +
                 ", orgId='" + orgId + '\'' +
+                ", orgCode='" + orgCode + '\'' +
                 ", orgType='" + orgType + '\'' +
                 ", orgName='" + orgName + '\'' +
                 ", manageOrgId='" + manageOrgId + '\'' +
+                ", manageOrgCode='" + manageOrgCode + '\'' +
                 ", manageOrgType='" + manageOrgType + '\'' +
                 ", manageOrgName='" + manageOrgName + '\'' +
                 ", deptFullPathId='" + deptFullPathId + '\'' +
                 ", currentOrg=" + currentOrg +
                 '}';
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
+    public String getManageOrgCode() {
+        return manageOrgCode;
+    }
+
+    public void setManageOrgCode(String manageOrgCode) {
+        this.manageOrgCode = manageOrgCode;
     }
 
     public Boolean getCurrentOrg() {
