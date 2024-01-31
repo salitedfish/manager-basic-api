@@ -163,6 +163,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 		left join sys_user_post sup on su.user_id = sup.user_id
 		    left join sys_post_role spr on sup.post_id = spr.post_id
+
 		left join sys_role sr on (sr.role_id in (sur.role_id, sdr.role_id, spr.role_id))
 
 		<where>

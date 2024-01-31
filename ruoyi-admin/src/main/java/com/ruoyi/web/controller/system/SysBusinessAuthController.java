@@ -53,8 +53,8 @@ public class SysBusinessAuthController extends BaseController {
             return error("列表不能为空");
         }
         for(SysBusinessAuth sba: sysBusinessAuthList) {
-            if(StringUtils.isEmpty(sba.getBusinessCode())) {
-                return error("businessCode不能为空");
+            if(StringUtils.isEmpty(sba.getBusinessId())) {
+                return error("businessId不能为空");
             }
             if(StringUtils.isEmpty(sba.getOrgId())) {
                 return error("orgId不能为空");
