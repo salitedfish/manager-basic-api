@@ -52,6 +52,23 @@ public class SysBusinessAuthController extends BaseController {
         if(StringUtils.isEmpty(sysBusinessAuthList)) {
             return error("列表不能为空");
         }
+        for(SysBusinessAuth sba: sysBusinessAuthList) {
+            if(StringUtils.isEmpty(sba.getBusinessCode())) {
+                return error("businessCode不能为空");
+            }
+            if(StringUtils.isEmpty(sba.getOrgId())) {
+                return error("orgId不能为空");
+            }
+            if(StringUtils.isEmpty(sba.getOrgType())) {
+                return error("orgType不能为空");
+            }
+            if(StringUtils.isEmpty(sba.getManageOrgId())) {
+                return error("manageOrgId不能为空");
+            }
+            if(StringUtils.isEmpty(sba.getManageOrgType())) {
+                return error("manageOrgType不能为空");
+            }
+        }
         return success(businessAuthService.insertBusinessAuth(sysBusinessAuthList));
     }
 
@@ -67,6 +84,4 @@ public class SysBusinessAuthController extends BaseController {
         }
         return success(businessAuthService.deleteBusinessAuth(businessAuthIds));
     }
-
-
 }

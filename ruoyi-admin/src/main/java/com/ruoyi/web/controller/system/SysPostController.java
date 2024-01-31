@@ -153,8 +153,11 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult insertPostRoleList(@RequestBody SysPostRole spr) {
+        if(StringUtils.isEmpty(spr.getPostId())) {
+            return error("postId不能为空");
+        }
         if(StringUtils.isEmpty(spr.getRoleIds())) {
-            return error("角色列表不能为空");
+            return error("roleIds不能为空");
         }
         return toAjax(postService.insertPostRoleList(spr));
     }
@@ -163,8 +166,11 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult deletePostRoleList(@RequestBody SysPostRole spr) {
+        if(StringUtils.isEmpty(spr.getPostId())) {
+            return error("postId不能为空");
+        }
         if(StringUtils.isEmpty(spr.getRoleIds())) {
-            return error("角色列表不能为空");
+            return error("roleIds不能为空");
         }
         return toAjax(postService.deletePostRoleList(spr));
     }

@@ -167,7 +167,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<insert id="insertPostRole" parameterType="List">
-		<foreach collection="list" item="item" separator=";">
+		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
 			insert into sys_post_role (
 			post_id,
 			role_id,

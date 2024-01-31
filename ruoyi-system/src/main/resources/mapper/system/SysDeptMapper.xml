@@ -201,7 +201,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<insert id="insertDeptRole" parameterType="List">
-        <foreach collection="list" item="item" separator=";">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
 			insert into sys_dept_role (
 			dept_id,
 			role_id,

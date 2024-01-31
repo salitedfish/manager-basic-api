@@ -106,11 +106,11 @@
     </select>
 
     <insert id="insertBusinessAuth" parameterType="List">
-        <foreach collection="list" item="item" separator=";">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             insert into sys_business_auth (business_id, org_id, org_type, manage_org_id, manage_org_type, create_by, create_time)
             select #{item.businessId}, #{item.orgId}, #{item.orgType}, #{item.manageOrgId}, #{item.manageOrgType}, #{item.createBy}, sysdate()
             from dual
-            where not exists(select org_id, manage_org_id from sys_business_auth where concat(org_id, manage_org_id) = concat(#{item.orgId}, #{item.manageOrgId}))
+            where not exists(select business_id, org_id, manage_org_id from sys_business_auth where concat(business_id, concat(org_id, manage_org_id)) = concat(#{item.businessId},concat(#{item.orgId}, #{item.manageOrgId})))
         </foreach>
     </insert>
 

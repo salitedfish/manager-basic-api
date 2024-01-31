@@ -170,8 +170,11 @@ public class SysDeptController extends BaseController
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult insertDeptRoleList(@RequestBody SysDeptRole sdr) {
+        if(StringUtils.isEmpty(sdr.getDeptId())) {
+            return error("deptId不能为空");
+        }
         if(StringUtils.isEmpty(sdr.getRoleIds())) {
-            return error("列表不能为空");
+            return error("roleIds不能为空");
         }
         return toAjax(deptService.insertDeptRole(sdr));
     }
@@ -180,8 +183,11 @@ public class SysDeptController extends BaseController
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult deleteDeptRoleList(@RequestBody SysDeptRole sdr) {
+        if(StringUtils.isEmpty(sdr.getDeptId())) {
+            return error("deptId不能为空");
+        }
         if(StringUtils.isEmpty(sdr.getRoleIds())) {
-            return error("列表不能为空");
+            return error("roleIds不能为空");
         }
         return toAjax(deptService.deleteDeptRoleList(sdr));
     }
