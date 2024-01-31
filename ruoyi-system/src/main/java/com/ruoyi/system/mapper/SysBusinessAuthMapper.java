@@ -25,10 +25,4 @@ public interface SysBusinessAuthMapper {
      */
     public int deleteBusinessAuth(List<Long> businessAuthIds);
 
-//    /**
-//     * 查询业务权限列表
-//     * @param user
-//     * @return
-//     */
-//    public List<SysBusinessAuth> getBusinessAuthListByUser(SysUser user);
 }

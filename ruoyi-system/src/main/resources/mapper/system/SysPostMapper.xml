@@ -35,8 +35,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectPostVo">
-        select post_id, post_code, post_name, post_sort, status, create_by, create_time, remark 
-		from sys_post
+        select sp.post_id, sp.post_code, sp.post_name, sp.post_sort, sp.status, sp.create_by, sp.create_time, sp.remark
+		from sys_post sp
+        left join sys_user su on sp.create_by = su.user_name
     </sql>
 	
 	<select id="selectPostList" parameterType="SysPost" resultMap="SysPostResult">
@@ -46,11 +47,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND post_code like concat('%', #{postCode}, '%')
 			</if>
 			<if test="status != null and status != ''">
-				AND status = #{status}
+				AND sp.status = #{status}
 			</if>
 			<if test="postName != null and postName != ''">
 				AND post_name like concat('%', #{postName}, '%')
 			</if>
+			<!-- 数据范围过滤 -->
+			${params.dataScope}
 		</where>
 	</select>
 	
@@ -164,16 +167,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<insert id="insertPostRole" parameterType="List">
-		insert into sys_post_role(
-		post_id,
-		role_id,
-		create_by,
-		create_time
-		)values
-		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.postId}, #{item.roleId}, #{item.createBy}, sysdate())
+		<foreach collection="list" item="item" separator=";">
+			insert into sys_post_role (
+			post_id,
+			role_id,
+			create_by,
+			create_time
+			)
+			select #{item.postId}, #{item.roleId}, #{item.createBy}, sysdate()
+			from dual
+			where not exists(select post_id, role_id from sys_post_role where concat(post_id, role_id) = concat(#{item.postId}, #{item.roleId}))
 		</foreach>
-
 	</insert>
 
 	<delete id="deletePostRole" parameterType="SysPost">

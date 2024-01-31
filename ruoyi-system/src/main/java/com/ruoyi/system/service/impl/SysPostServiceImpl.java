@@ -3,6 +3,7 @@ package com.ruoyi.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
@@ -44,6 +45,7 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 岗位信息集合
      */
     @Override
+    @DataScope(businessCode = "system/post/list", deptAlias = "su", userAlias = "su")
     public List<SysPost> selectPostList(SysPost post)
     {
         return postMapper.selectPostList(post);

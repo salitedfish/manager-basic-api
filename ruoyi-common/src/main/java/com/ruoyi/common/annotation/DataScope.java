@@ -35,10 +35,4 @@ public @interface DataScope
      * 业务权限标识
      */
     public String businessCode() default "";
-
-    /**
-     * 判断权限所参照的表别名
-     * @return
-     */
-    public String tableAlias() default "";
 }

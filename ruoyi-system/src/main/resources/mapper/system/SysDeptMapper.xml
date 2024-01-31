@@ -201,15 +201,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<insert id="insertDeptRole" parameterType="List">
-		insert into sys_dept_role(
-		dept_id,
-		role_id,
-		create_by,
-		create_time
-		)
-		values
-		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.deptId}, #{item.roleId}, #{item.createBy}, sysdate())
+        <foreach collection="list" item="item" separator=";">
+			insert into sys_dept_role (
+			dept_id,
+			role_id,
+			create_by,
+			create_time
+			)
+			select #{item.deptId}, #{item.roleId}, #{item.createBy}, sysdate()
+			from dual
+			where not exists(select dept_id, role_id from sys_dept_role where concat(dept_id, role_id) = concat(#{item.deptId}, #{item.roleId}))
 		</foreach>
 	</insert>
 

@@ -49,7 +49,7 @@ public class SysDeptServiceImpl implements ISysDeptService
      * @return 部门信息集合
      */
     @Override
-    @DataScope(deptAlias = "d", businessCode = "system:dept:list", tableAlias = "d")
+    @DataScope(deptAlias = "d", businessCode = "system/dept/list")
     public List<SysDept> selectDeptList(SysDept dept)
     {
         return deptMapper.selectDeptList(dept);
@@ -80,24 +80,24 @@ public class SysDeptServiceImpl implements ISysDeptService
         List<SysDept> deptTrees = buildDeptTree(depts);
 
         // 获取人员列表，并构建包含人员和部门的选择树
-        List<String> ids = depts.stream().map((item -> item.getDeptId())).collect(Collectors.toList());
-        List<SysUser> users = userService.selectUserListByDeptIds(ids);
-//        List<SysUser> users = userService.selectUserList(new SysUser());
+//        List<String> ids = depts.stream().map((item -> item.getDeptId())).collect(Collectors.toList());
+//        List<SysUser> users = userService.selectUserListByDeptIds(ids);
+        List<SysUser> users = userService.selectUserList(new SysUser());
         List<TreeSelect> deptTreesWithUser = deptTrees.stream().map(d -> new TreeSelect(d, users)).collect(Collectors.toList());
 
         // 遍历部门表和人员表，如果人员的部门id不在部门表中，则放在顶层列表中
-//        for(SysUser user: users) {
-//            Boolean existDept = false;
-//            for(SysDept d: depts) {
-//                if(d.getDeptId().equals(user.getDeptId()) ) {
-//                    existDept = true;
-//                    break;
-//                }
-//            }
-//            if(!existDept) {
-//                deptTreesWithUser.add(new TreeSelect(user));
-//            }
-//        }
+        for(SysUser user: users) {
+            Boolean existDept = false;
+            for(SysDept d: depts) {
+                if(d.getDeptId().equals(user.getDeptId()) ) {
+                    existDept = true;
+                    break;
+                }
+            }
+            if(!existDept) {
+                deptTreesWithUser.add(new TreeSelect(user));
+            }
+        }
 
         return deptTreesWithUser;
     };

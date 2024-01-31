@@ -124,10 +124,10 @@ public class DataScopeAspect
      */
     public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias, Set<String> deptIds, Set<String> userIds) {
 
-
         StringBuilder sqlString = new StringBuilder();
         List<String> conditions = new ArrayList<>();
 
+        // 通过部门去过滤
         if(StringUtils.isNotEmpty(deptAlias)) {
             for(String deptId: deptIds) {
                sqlString.append(StringUtils.format(" OR {}.dept_id = {} ) ", deptAlias, deptId));
@@ -135,23 +135,26 @@ public class DataScopeAspect
             }
         }
 
+        // 通过人员去过滤
         if(StringUtils.isNotEmpty(userAlias)) {
             for(String userId: userIds) {
-                sqlString.append(StringUtils.format(" OR {}.create_by IN (SELECT user_name FROM sys_user WHERE user_id = {})", deptAlias, userId));
+                sqlString.append(StringUtils.format("OR {}.user_id = {} OR {}.create_id = {} OR {}.create_by IN (SELECT user_name FROM sys_user WHERE user_id = {})",userAlias, userId, userAlias, userId, userAlias, userId));
                 conditions.add(userId);
             }
         }
 
+        // 如果conditions没有，则说明用户没有任何业务权限，排除所有数据
         if(StringUtils.isEmpty(conditions)) {
             sqlString.append(StringUtils.format(" OR 1 = 0 "));
-        } else {
-            Object params = joinPoint.getArgs()[0];
-            if (StringUtils.isNotNull(params) && params instanceof BaseEntity)
-            {
-                BaseEntity baseEntity = (BaseEntity) params;
-                baseEntity.getParams().put(DATA_SCOPE, " AND (" + sqlString.substring(4) + ")");
-            }
         }
+
+        Object params = joinPoint.getArgs()[0];
+        if (StringUtils.isNotNull(params) && params instanceof BaseEntity)
+        {
+            BaseEntity baseEntity = (BaseEntity) params;
+            baseEntity.getParams().put(DATA_SCOPE, " AND (" + sqlString.substring(4) + ")");
+        }
+
     }
 
     /**

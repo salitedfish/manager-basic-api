@@ -106,29 +106,18 @@
     </select>
 
     <insert id="insertBusinessAuth" parameterType="List">
-        insert into sys_business_auth
-            (business_id, org_id, org_type, manage_org_id, manage_org_type, create_by, create_time)
-        VALUES
-        <foreach collection="list" separator="," item="item">
-            (#{item.businessId},
-             #{item.orgId},
-             #{item.orgType},
-             #{item.manageOrgId},
-             #{item.manageOrgType},
-             #{item.createBy},
-             sysdate())
+        <foreach collection="list" item="item" separator=";">
+            insert into sys_business_auth (business_id, org_id, org_type, manage_org_id, manage_org_type, create_by, create_time)
+            select #{item.businessId}, #{item.orgId}, #{item.orgType}, #{item.manageOrgId}, #{item.manageOrgType}, #{item.createBy}, sysdate()
+            from dual
+            where not exists(select org_id, manage_org_id from sys_business_auth where concat(org_id, manage_org_id) = concat(#{item.orgId}, #{item.manageOrgId}))
         </foreach>
     </insert>
 
     <delete id="deleteBusinessAuth" parameterType="List">
         delete from sys_business_auth
                where id in
-               <foreach collection="list" item="item" open="(" separator="," close=")"> #{id} </foreach>
+               <foreach collection="list" item="item" open="(" separator="," close=")"> #{item} </foreach>
     </delete>
-
-<!--    <select id="getBusinessAuthListByUser" parameterType="SysUser" resultMap="SysBusinessAuthResult">-->
-<!--        <include refid="selectBusinessAuthVo"/>-->
-<!--        where (org_type = 1 AND org_id = #{userId}) OR (org_type = 0 AND find_in_set(org_id, #{deptFullPathId}))-->
-<!--    </select>-->
 
 </mapper>

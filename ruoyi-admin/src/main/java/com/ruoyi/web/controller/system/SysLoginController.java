@@ -69,7 +69,7 @@ public class SysLoginController
         SysUser user = loginUser.getUser();
         // 角色集合
 //        Set<String> roles = permissionService.getRolePermission(user);
-        Set<String> roles = roleService.selectALLRolesSetByUser(user);
+        Set<String> roles = roleService.selectALLRolesKeyByUser(user);
         // 权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
         AjaxResult ajax = AjaxResult.success();

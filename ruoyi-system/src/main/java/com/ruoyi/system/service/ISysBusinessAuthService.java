@@ -21,10 +21,5 @@ public interface ISysBusinessAuthService {
      * 删除业务授权列表
      */
     public int deleteBusinessAuth(List<Long> businessAuthIds);
-//
-//    /**
-//     * 根据用户查询业务权限列表
-//     */
-//    public List<SysBusinessAuth> getBusinessAuthListByUser(SysUser user);
 
 }

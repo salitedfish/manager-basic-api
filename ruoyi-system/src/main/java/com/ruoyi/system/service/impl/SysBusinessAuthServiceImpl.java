@@ -39,21 +39,24 @@ public class SysBusinessAuthServiceImpl implements ISysBusinessAuthService {
     public List<SysBusinessAuth> selectBusinessAuthList(SysBusinessAuth sbam) {
         String orgType = sbam.getOrgType();
         String orgId = sbam.getOrgId();
+        // 如果是部门和人员，因为要根据部门路径查找继承的角色，所以获取部门路径
         if(StringUtils.isNotNull(orgId) && StringUtils.isNull(sbam.getDeptFullPathId())) {
             if(orgType.equals(BusinessAuthOrgType.DEPT.getValue())) {
                 SysDept dept = deptMapper.selectDeptById(orgId);
-                sbam.setDeptFullPathId(dept.getAncestors() + "," + dept.getDeptId());
+                if(StringUtils.isNotNull(dept)) {
+                    sbam.setDeptFullPathId(dept.getAncestors() + "," + dept.getDeptId());
+                }
             }
             if(orgType.equals(BusinessAuthOrgType.USER.getValue())) {
                 SysUser user = userMapper.selectUserById(orgId);
                 SysDept dept = deptMapper.selectDeptById(user.getDeptId());
-                sbam.setDeptFullPathId(dept.getAncestors() + "," + dept.getDeptId());
+                if(StringUtils.isNotNull(user) && StringUtils.isNotNull(dept)) {
+                    sbam.setDeptFullPathId(dept.getAncestors() + "," + dept.getDeptId());
+                }
             }
         }
 
-        List<SysBusinessAuth> sbas = businessAuthMapper.selectBusinessAuthList(sbam);
-
-        return sbas;
+        return businessAuthMapper.selectBusinessAuthList(sbam);
     };
 
     /**
@@ -79,29 +82,6 @@ public class SysBusinessAuthServiceImpl implements ISysBusinessAuthService {
 
         return businessAuthMapper.deleteBusinessAuth(businessAuthIds);
     };
-
-//    /**
-//     * 根据用户查询业务权限列表
-//     */
-//    public List<SysBusinessAuth> getBusinessAuthListByUser(SysUser user) {
-//        List<SysBusinessAuth> sbas = businessAuthMapper.getBusinessAuthListByUser(user);
-//        return sbas;
-//    };
-
-//    /**
-//     * 补全业务权限列表
-//     */
-//    public List<SysBusinessAuth> genBusinessAuthList(List<SysBusinessAuth> sbas) {
-//        for(SysBusinessAuth sba: sbas) {
-//            String deptFullPathId = sba.getDeptFullPathId();
-//            if(sba.getOrgType().equals(SelectTreeNodeType.USER.getValue())) {
-//                sba.setFullPathId(deptFullPathId + "," + sba.getOrgId());
-//            } else {
-//                sba.setFullPathId(deptFullPathId);
-//            }
-//        }
-//        return sbas;
-//    };
 
 
 }

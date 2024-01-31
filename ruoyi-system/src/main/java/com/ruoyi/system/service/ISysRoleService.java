@@ -49,7 +49,7 @@ public interface ISysRoleService
      * @param user
      * @return
      */
-    public Set<String> selectALLRolesSetByUser(SysUser user);
+    public Set<String> selectALLRolesKeyByUser(SysUser user);
 
     /**
      * 根据用户ID查询角色权限

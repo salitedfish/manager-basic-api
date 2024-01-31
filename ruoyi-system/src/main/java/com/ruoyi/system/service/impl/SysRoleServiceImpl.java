@@ -64,7 +64,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @return 角色数据集合信息
      */
     @Override
-    @DataScope(deptAlias = "d")
+    @DataScope(userAlias = "r", deptAlias = "sd", businessCode = "system/role/list")
     public List<SysRole> selectRoleList(SysRole role)
     {
         return roleMapper.selectRoleList(role);
@@ -149,7 +149,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      * @param user
      * @return
      */
-    public Set<String> selectALLRolesSetByUser(SysUser user) {
+    public Set<String> selectALLRolesKeyByUser(SysUser user) {
         Set<String> permsSet = new HashSet<>();
         List<SysRole> perms = selectALLRolesByUser(user);
         for (SysRole perm : perms)
