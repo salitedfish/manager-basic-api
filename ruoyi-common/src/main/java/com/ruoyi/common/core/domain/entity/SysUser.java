@@ -57,11 +57,11 @@ public class SysUser extends BaseEntity
     /** 密码 */
     private String password;
 
-    /** 帐号状态（0正常 1停用） */
-    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
+    /** 帐号状态（0停用 1正常） */
+    @Excel(name = "帐号状态", readConverterExp = "0=停用,1=正常")
     private String status;
 
-    /** 删除标志（0代表存在 2代表删除） */
+    /** 删除标志（0代表删除 2代表存在） */
     private String delFlag;
 
     /** 最后登录IP */
@@ -102,6 +102,8 @@ public class SysUser extends BaseEntity
         this.deptFullPathId = deptFullPathId;
     }
 
+    public Boolean subAdmin;
+
     public SysUser()
     {
 
@@ -110,6 +112,14 @@ public class SysUser extends BaseEntity
     public SysUser(String userId)
     {
         this.userId = userId;
+    }
+
+    public Boolean getSubAdmin() {
+        return subAdmin;
+    }
+
+    public void setSubAdmin(Boolean subAdmin) {
+        this.subAdmin = subAdmin;
     }
 
     public String getUserId()

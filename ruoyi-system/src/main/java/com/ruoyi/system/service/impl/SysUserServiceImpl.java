@@ -390,6 +390,7 @@ public class SysUserServiceImpl implements ISysUserService
      * 
      * @param user 用户对象
      */
+    @Override
     public void insertUserRole(SysUser user)
     {
         this.insertUserRole(user.getUserId(), user.getRoleIds());

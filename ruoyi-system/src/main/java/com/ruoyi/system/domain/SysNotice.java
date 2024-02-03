@@ -28,7 +28,7 @@ public class SysNotice extends BaseEntity
     /** 公告内容 */
     private String noticeContent;
 
-    /** 公告状态（0正常 1关闭） */
+    /** 公告状态（0关闭 1正常） */
     private String status;
 
     public Long getNoticeId()

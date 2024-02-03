@@ -10,10 +10,29 @@ public class SysDeptRole extends BaseEntity {
     private String deptId;
 
     private Long roleId;
+    private String roleKey;
 
     private String roleName;
 
     private List<Long> roleIds;
+
+    private Boolean subAdmin;
+
+    public Boolean getSubAdmin() {
+        return subAdmin;
+    }
+
+    public void setSubAdmin(Boolean subAdmin) {
+        this.subAdmin = subAdmin;
+    }
+
+    public String getRoleKey() {
+        return roleKey;
+    }
+
+    public void setRoleKey(String roleKey) {
+        this.roleKey = roleKey;
+    }
 
     public Long getId() {
         return id;

@@ -46,10 +46,10 @@ public class SysDept extends BaseEntity
     /** 邮箱 */
     private String email;
 
-    /** 部门状态:0正常,1停用 */
+    /** 部门状态:0停用,1正常 */
     private String status;
 
-    /** 删除标志（0代表存在 2代表删除） */
+    /** 删除标志（0代表删除 2代表存在） */
     private String delFlag;
 
     /** 父部门名称 */
@@ -63,6 +63,9 @@ public class SysDept extends BaseEntity
 
     /** 部门关联的角色列表*/
     private List<SysRole> roles;
+
+    /** 是否子管理员 */
+    private Boolean subAdmin;
 
     @Override
     public String toString() {
@@ -83,6 +86,14 @@ public class SysDept extends BaseEntity
                 ", roleIds=" + roleIds +
                 ", roles=" + roles +
                 '}';
+    }
+
+    public Boolean getSubAdmin() {
+        return subAdmin;
+    }
+
+    public void setSubAdmin(Boolean subAdmin) {
+        this.subAdmin = subAdmin;
     }
 
     public String getDeptCode() {

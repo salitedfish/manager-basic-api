@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysBusinessSubAdminMapper">
+
+    <resultMap type="SysBusiness" id="SysBusinessResult">
+        <id     property="businessId"         column="business_id"        />
+        <result property="businessCode"       column="business_code"      />
+        <result property="businessName"     column="business_name"    />
+        <result property="createBy"     column="create_by"    />
+        <result property="createTime"     column="create_time"    />
+        <result property="status"       column="status"      />
+    </resultMap>
+
+
+    <sql id="selectBusinessVo">
+        select sb.business_id, sb.business_code, sb.business_name, sb.create_by, sb.create_time, sb.status
+        from sys_sub_admin_business ssab
+            left join sys_business sb on ssab.business_id = sb.business_id
+    </sql>
+
+    <select id="selectBusinessSubAdminList" resultMap="SysBusinessResult">
+        <include refid="selectBusinessVo"/>
+        <where>
+            sb.status = '1' and ssab.user_id = #{userId}
+            <if test="business.businessId != null and business.businessId != ''">
+                AND sb.business_id = #{business.businessId}
+            </if>
+            <if test="business.businessCode != null and businessCode != ''">
+                AND sb.business_code = #{business.businessCode}
+            </if>
+            <if test="business.businessName != null and businessName != ''">
+                AND sb.business_name = #{business.businessName}
+            </if>
+            <if test="business.status != null and business.status != ''">
+                AND sb.status = #{business.status}
+            </if>
+        </where>
+    </select>
+
+
+</mapper>

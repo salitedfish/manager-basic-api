@@ -9,12 +9,13 @@ package com.ruoyi.common.enums;
 public enum BusinessStatus
 {
     /**
-     * 成功
-     */
-    SUCCESS,
-
-    /**
      * 失败
      */
     FAIL,
+    /**
+     * 成功
+     */
+    SUCCESS
+
+
 }

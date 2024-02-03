@@ -46,17 +46,17 @@
         left join sys_user su on su.user_name = sba.create_by
 
         left join (
-            SELECT user_id AS id, user_name AS code, nick_name AS name FROM sys_user WHERE del_flag = '0'
+            SELECT user_id AS id, user_name AS code, nick_name AS name FROM sys_user WHERE del_flag = '2'
             UNION ALL
-            SELECT dept_id AS id, dept_code AS code, dept_name AS name FROM sys_dept WHERE del_flag = '0'
+            SELECT dept_id AS id, dept_code AS code, dept_name AS name FROM sys_dept WHERE del_flag = '2'
             UNION ALL
             SELECT post_id AS id, post_code AS code, post_name AS name FROM sys_post
         ) AS org ON org.id = sba.org_id
 
         left join (
-            SELECT user_id AS id, user_name AS code, nick_name AS name FROM sys_user WHERE del_flag = '0'
+            SELECT user_id AS id, user_name AS code, nick_name AS name FROM sys_user WHERE del_flag = '2'
             UNION ALL
-            SELECT dept_id AS id, dept_code AS code, dept_name AS name FROM sys_dept WHERE del_flag = '0'
+            SELECT dept_id AS id, dept_code AS code, dept_name AS name FROM sys_dept WHERE del_flag = '2'
         ) AS manage_org ON manage_org.id = manage_org_id
 
     </sql>
@@ -65,13 +65,16 @@
         <include refid="selectBusinessAuthVo"/>
         <where>
             <if test="id != null and id != 0">
-                AND id = #{id}
+                AND sba.id = #{id}
+            </if>
+            <if test="businessId != null and businessId != ''">
+                AND sba.business_id = #{businessId}
             </if>
             <if test="businessCode != null and businessCode != ''">
-                AND business_code = #{businessCode}
+                AND sba.business_code = #{businessCode}
             </if>
             <if test="businessName != null and businessName != ''">
-                AND business_name = #{businessName}
+                AND sba.business_name = #{businessName}
             </if>
             <if test="orgId != null and orgId != ''">
                 <!-- 如果传了currentOrg说明只查这个组织的数据 -->

@@ -71,6 +71,9 @@ public class SysBusinessAuth extends BaseEntity {
      */
     private Boolean currentOrg;
 
+    /** 子管理员 */
+    private Boolean subAdmin;
+
     @Override
     public String toString() {
         return "SysBusinessAuth{" +
@@ -89,6 +92,14 @@ public class SysBusinessAuth extends BaseEntity {
                 ", deptFullPathId='" + deptFullPathId + '\'' +
                 ", currentOrg=" + currentOrg +
                 '}';
+    }
+
+    public Boolean getSubAdmin() {
+        return subAdmin;
+    }
+
+    public void setSubAdmin(Boolean subAdmin) {
+        this.subAdmin = subAdmin;
     }
 
     public String getOrgCode() {

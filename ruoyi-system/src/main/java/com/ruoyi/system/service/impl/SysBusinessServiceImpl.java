@@ -20,21 +20,9 @@ public class SysBusinessServiceImpl implements ISysBusinessService {
      * 根据用户查询系统业务列表
      *
      * @param business 业务信息
-     * @param userId 用户ID
      * @return 菜单列表
      */
-    public List<SysBusiness> selectBusinessList(SysBusiness business, String userId) {
-        List<SysBusiness> menuList = null;
-        // 管理员显示所有业务信息
-//        if (SysUser.isAdmin(userId))
-//        {
-            menuList = businessMapper.selectBusinessList(business);
-//        }
-//        else
-//        {
-//            business.getParams().put("userId", userId);
-//            menuList = businessMapper.selectBusinessListByUserId(business);
-//        }
-        return menuList;
+    public List<SysBusiness> selectBusinessList(SysBusiness business) {
+        return businessMapper.selectBusinessList(business);
     };
 }

@@ -89,7 +89,7 @@ public class SysMenuServiceImpl implements ISysMenuService
             Set<Long> roleIdSet = roleService.selectAllRolesIdByUser(user);
             List<Long> roleIds = new ArrayList<>();
             roleIds.addAll(roleIdSet);
-            menuList = menuMapper.selectMenuListByRoleIds(roleIds);
+            menuList = menuMapper.selectMenuListByRoleIds(menu, roleIds);
         }
         return menuList;
     }
@@ -210,7 +210,7 @@ public class SysMenuServiceImpl implements ISysMenuService
         for (SysMenu menu : menus)
         {
             RouterVo router = new RouterVo();
-            router.setHidden("1".equals(menu.getVisible()));
+            router.setHidden("0".equals(menu.getVisible()));
             router.setName(getRouteName(menu));
             router.setPath(getRouterPath(menu));
             router.setComponent(getComponent(menu));

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysSubAdminMapper">
+
+    <!-- 子管理员管理部门 -->
+    <resultMap type="SysDept" id="SysDeptResult">
+        <id     property="deptId"     column="dept_id"     />
+        <id     property="deptCode"     column="dept_code" />
+        <result property="parentId"   column="parent_id"   />
+        <result property="ancestors"  column="ancestors"   />
+        <result property="deptName"   column="dept_name"   />
+        <result property="orderNum"   column="order_num"   />
+        <result property="leader"     column="leader"      />
+        <result property="phone"      column="phone"       />
+        <result property="email"      column="email"       />
+        <result property="status"     column="status"      />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="parentName" column="parent_name" />
+        <result property="createBy"   column="create_by"   />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy"   column="update_by"   />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <select id="selectSubAdminDept" parameterType="SysSubAdminDept" resultMap="SysDeptResult">
+        select distinct sd.dept_id, sd.dept_code, sd.parent_id, sd.ancestors, sd.dept_name, sd.order_num, sd.leader, sd.phone, sd.email, sd.status, sd.del_flag, sd.create_by, sd.create_time
+        from sys_sub_admin_dept suad
+        left join sys_dept sd on suad.dept_id = sd.dept_id
+        where sd.del_flag = '2' and suad.user_id = #{userId}
+    </select>
+
+    <insert id="insertSubAdminDept" parameterType="List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            insert into sys_sub_admin_dept (
+            user_id,
+            dept_id,
+            create_by,
+            create_time
+            )
+            select #{item.userId}, #{item.deptId},  #{item.createBy}, sysdate()
+            from dual
+            where not exists(select user_id, dept_id from sys_sub_admin_dept where concat(user_id, dept_id) = concat(#{item.userId}, #{item.deptId}))
+        </foreach>
+    </insert>
+
+    <delete id="deleteSubAdminDept" parameterType="List">
+        delete from sys_sub_admin_dept
+        where concat(user_id, dept_id) in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            concat(#{item.userId, item.deptId})
+        </foreach>
+    </delete>
+
+    <!-- 子管理员管理岗位 -->
+    <resultMap type="SysPost" id="SysPostResult">
+        <id     property="postId"        column="post_id"       />
+        <result property="postCode"      column="post_code"     />
+        <result property="postName"      column="post_name"     />
+        <result property="postSort"      column="post_sort"     />
+        <result property="status"        column="status"        />
+        <result property="createBy"      column="create_by"     />
+        <result property="createTime"    column="create_time"   />
+        <result property="updateBy"      column="update_by"     />
+        <result property="updateTime"    column="update_time"   />
+        <result property="remark"        column="remark"        />
+    </resultMap>
+
+    <select id="selectSubAdminPost" parameterType="SysSubAdminPost" resultMap="SysPostResult">
+        select distinct sp.post_id, sp.post_code, sp.post_name, sp.post_sort, sp.status, sp.create_by, sp.create_time, sp.remark
+        from sys_sub_admin_post suap
+                 left join sys_post sp on suap.post_id = sp.post_id
+        where  suap.user_id = #{userId}
+    </select>
+
+    <insert id="insertSubAdminPost" parameterType="List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            insert into sys_sub_admin_post (
+            user_id,
+            post_id,
+            create_by,
+            create_time
+            )
+            select #{item.userId}, #{item.postId},  #{item.createBy}, sysdate()
+            from dual
+            where not exists(select user_id, post_id from sys_sub_admin_post where concat(user_id, post_id) = concat(#{item.userId}, #{item.postId}))
+        </foreach>
+    </insert>
+
+    <delete id="deleteSubAdminPost" parameterType="List">
+        delete from sys_sub_admin_post
+        where concat(user_id, post_id) in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            concat(#{item.userId, item.postId})
+        </foreach>
+    </delete>
+
+    <!-- 子管理员管理角色 -->
+    <resultMap type="SysRole" id="SysRoleResult">
+        <id     property="roleId"             column="role_id"               />
+        <result property="roleName"           column="role_name"             />
+        <result property="roleKey"            column="role_key"              />
+        <result property="roleSort"           column="role_sort"             />
+        <result property="dataScope"          column="data_scope"            />
+        <result property="menuCheckStrictly"  column="menu_check_strictly"   />
+        <result property="deptCheckStrictly"  column="dept_check_strictly"   />
+        <result property="status"             column="status"                />
+        <result property="delFlag"            column="del_flag"              />
+        <result property="createBy"           column="create_by"             />
+        <result property="createTime"         column="create_time"           />
+        <result property="updateBy"           column="update_by"             />
+        <result property="updateTime"         column="update_time"           />
+        <result property="remark"             column="remark"                />
+    </resultMap>
+
+    <select id="selectSubAdminRole" parameterType="SysSubAdminRole" resultMap="SysRoleResult">
+        select distinct r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.menu_check_strictly, r.dept_check_strictly,
+                        r.status, r.del_flag, r.create_by, r.create_time, r.remark
+        from sys_sub_admin_role suar
+                 left join sys_role r on suar.role_id = r.role_id
+        where r.del_flag = '2' and suar.user_id = #{userId}
+    </select>
+
+    <insert id="insertSubAdminRole" parameterType="List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            insert into sys_sub_admin_role (
+            user_id,
+            role_id,
+            create_by,
+            create_time
+            )
+            select #{item.userId}, #{item.roleId},  #{item.createBy}, sysdate()
+            from dual
+            where not exists(select user_id, role_id from sys_sub_admin_role where concat(user_id, role_id) = concat(#{item.userId}, #{item.roleId}))
+        </foreach>
+    </insert>
+
+    <delete id="deleteSubAdminRole" parameterType="List">
+        delete from sys_sub_admin_role
+        where concat(user_id, role_id) in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            concat(#{item.userId, item.roleId})
+        </foreach>
+    </delete>
+
+    <!-- 子管理员管理业务 -->
+    <resultMap type="SysBusiness" id="SysBusinessResult">
+        <id     property="businessId"         column="business_id"        />
+        <result property="businessCode"       column="business_code"      />
+        <result property="businessName"     column="business_name"    />
+        <result property="createBy"     column="create_by"    />
+        <result property="createTime"     column="create_time"    />
+        <result property="status"       column="status"      />
+    </resultMap>
+
+    <select id="selectSubAdminBusiness" parameterType="SysSubAdminBusiness" resultMap="SysBusinessResult">
+        select distinct sb.business_id, sb.business_code, sb.business_name, sb.create_by, sb.create_time, sb.status
+        from sys_sub_admin_business suab
+                 left join sys_business sb on suab.business_id = sb.business_id
+        where suab.user_id = #{userId}
+    </select>
+
+    <insert id="insertSubAdminBusiness" parameterType="List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            insert into sys_sub_admin_business (
+            user_id,
+            business_id,
+            create_by,
+            create_time
+            )
+            select #{item.userId}, #{item.businessId},  #{item.createBy}, sysdate()
+            from dual
+            where not exists(select user_id, business_id from sys_sub_admin_business where concat(user_id, business_id) = concat(#{item.userId}, #{item.businessId}))
+        </foreach>
+    </insert>
+
+    <delete id="deleteSubAdminBusiness" parameterType="List">
+        delete from sys_sub_admin_business
+        where concat(user_id, business_id) in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            concat(#{item.userId, item.businessId})
+        </foreach>
+    </delete>
+
+</mapper>

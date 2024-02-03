@@ -8,20 +8,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <id     property="businessId"         column="business_id"        />
         <result property="businessCode"       column="business_code"      />
         <result property="businessName"     column="business_name"    />
+        <result property="createBy"     column="create_by"    />
+        <result property="createTime"     column="create_time"    />
         <result property="status"       column="status"      />
-
     </resultMap>
 
 
     <sql id="selectBusinessVo">
-        select business_id, business_code, business_name, status
+        select business_id, business_code, business_name, create_by, create_time, status
         from sys_business
     </sql>
 
     <select id="selectBusinessList" parameterType="SysBusiness" resultMap="SysBusinessResult">
         <include refid="selectBusinessVo"/>
         <where>
-            status = '0'
+            status = '1'
             <if test="businessId != null and businessId != ''">
                 AND business_id = #{businessId}
             </if>

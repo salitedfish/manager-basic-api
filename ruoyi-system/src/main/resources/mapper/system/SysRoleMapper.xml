@@ -35,7 +35,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
     <select id="selectRoleList" parameterType="SysRole" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		where r.del_flag = '0'
+		where r.del_flag = '2'
 		<if test="roleId != null and roleId != 0">
 			AND r.role_id = #{roleId}
 		</if>
@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     
 	<select id="selectRolePermissionByUserId" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		WHERE r.del_flag = '0' and ur.user_id = #{userId}
+		WHERE r.del_flag = '2' and ur.user_id = #{userId}
 	</select>
 	
 	<select id="selectRoleAll" resultMap="SysRoleResult">
@@ -83,17 +83,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	
 	<select id="selectRolesByUserName" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		WHERE r.del_flag = '0' and u.user_name = #{userName}
+		WHERE r.del_flag = '2' and u.user_name = #{userName}
 	</select>
 	
 	<select id="checkRoleNameUnique" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		 where r.role_name=#{roleName} and r.del_flag = '0' limit 1
+		 where r.role_name=#{roleName} and r.del_flag = '2' limit 1
 	</select>
 	
 	<select id="checkRoleKeyUnique" parameterType="String" resultMap="SysRoleResult">
 		<include refid="selectRoleVo"/>
-		 where r.role_key=#{roleKey} and r.del_flag = '0' limit 1
+		 where r.role_key=#{roleKey} and r.del_flag = '2' limit 1
 	</select>
 	
  	<insert id="insertRole" parameterType="SysRole" useGeneratedKeys="true" keyProperty="roleId">
@@ -142,11 +142,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</update>
 	
 	<delete id="deleteRoleById" parameterType="Long">
- 		update sys_role set del_flag = '2' where role_id = #{roleId}
+ 		update sys_role set del_flag = '0' where role_id = #{roleId}
  	</delete>
  	
  	<delete id="deleteRoleByIds" parameterType="Long">
- 	    update sys_role set del_flag = '2' where role_id in
+ 	    update sys_role set del_flag = '0' where role_id in
  		<foreach collection="array" item="roleId" open="(" separator="," close=")">
  			#{roleId}
         </foreach> 
@@ -167,6 +167,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		left join sys_role sr on (sr.role_id in (sur.role_id, sdr.role_id, spr.role_id))
 
 		<where>
+		    and sr.role_id in (sur.role_id, sdr.role_id, spr.role_id)
 			<if test="userId != null and userId != ''" >
 				and su.user_id = #{userId}
 			</if>

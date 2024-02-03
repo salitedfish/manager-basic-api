@@ -25,6 +25,16 @@ public class SysBusiness extends BaseEntity
     /** 菜单状态（0正常 1停用） */
     private String status;
 
+    private Boolean subAdmin;
+
+    public Boolean getSubAdmin() {
+        return subAdmin;
+    }
+
+    public void setSubAdmin(Boolean subAdmin) {
+        this.subAdmin = subAdmin;
+    }
+
     public String getBusinessId() {
         return businessId;
     }

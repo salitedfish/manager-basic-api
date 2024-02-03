@@ -23,8 +23,8 @@ public class SysLogininfor extends BaseEntity
     @Excel(name = "用户账号")
     private String userName;
 
-    /** 登录状态 0成功 1失败 */
-    @Excel(name = "登录状态", readConverterExp = "0=成功,1=失败")
+    /** 登录状态 0失败 1成功 */
+    @Excel(name = "登录状态", readConverterExp = "0=失败,1=成功")
     private String status;
 
     /** 登录IP地址 */

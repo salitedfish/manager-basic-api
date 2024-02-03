@@ -159,7 +159,7 @@ public class SysPostController extends BaseController
         if(StringUtils.isEmpty(spr.getRoleIds())) {
             return error("roleIds不能为空");
         }
-        return toAjax(postService.insertPostRoleList(spr));
+        return success(postService.insertPostRoleList(spr));
     }
 
     @ApiOperation("删除岗位关联的角色")
@@ -172,6 +172,6 @@ public class SysPostController extends BaseController
         if(StringUtils.isEmpty(spr.getRoleIds())) {
             return error("roleIds不能为空");
         }
-        return toAjax(postService.deletePostRoleList(spr));
+        return success(postService.deletePostRoleList(spr));
     }
 }

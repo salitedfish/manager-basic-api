@@ -41,7 +41,7 @@ public interface SysMenuMapper
      * @param roleIds
      * @return
      */
-    public List<SysMenu> selectMenuListByRoleIds(List roleIds);
+    public List<SysMenu> selectMenuListByRoleIds(@Param("menu") SysMenu menu, @Param("roleIds") List roleIds);
 
     /**
      * 根据角色ID查询权限

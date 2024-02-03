@@ -210,4 +210,18 @@ public interface ISysUserService
      * @return
      */
     public List<SysUser> selectUserListByDeptIds(List<String> deptIds);
+
+    /**
+     * 新增用户角色信息
+     *
+     * @param user 用户对象
+     */
+    public void insertUserRole(SysUser user);
+
+    /**
+     * 新增用户岗位信息
+     *
+     * @param user 用户对象
+     */
+    public void insertUserPost(SysUser user);
 }

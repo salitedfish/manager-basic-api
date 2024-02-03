@@ -11,9 +11,20 @@ public class SysPostRole extends BaseEntity {
 
     private Long roleId;
 
+    private String roleKey;
+
     private String roleName;
 
     private List<Long> roleIds;
+
+
+    public String getRoleKey() {
+        return roleKey;
+    }
+
+    public void setRoleKey(String roleKey) {
+        this.roleKey = roleKey;
+    }
 
     public Long getId() {
         return id;

@@ -1,8 +1,12 @@
 package com.ruoyi.web.controller.system;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.domain.TreeSelect;
+import com.ruoyi.system.domain.SysDeptRole;
+import com.ruoyi.system.service.ISysRoleSubAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +52,9 @@ public class SysRoleController extends BaseController
     private ISysRoleService roleService;
 
     @Autowired
+    private ISysRoleSubAdminService roleSubAdminService;
+
+    @Autowired
     private TokenService tokenService;
 
     @Autowired
@@ -65,7 +72,13 @@ public class SysRoleController extends BaseController
     public TableDataInfo list(SysRole role)
     {
         startPage();
-        List<SysRole> list = roleService.selectRoleList(role);
+        List<SysRole> list = new ArrayList<>();
+        if(StringUtils.isNotNull(role.getSubAdmin())) {
+            list = roleSubAdminService.selectRoleList(role);
+        } else {
+            list = roleService.selectRoleList(role);
+        }
+
         return getDataTable(list);
     }
 
@@ -110,7 +123,7 @@ public class SysRoleController extends BaseController
             return error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
         role.setCreateBy(getUsername());
-        return toAjax(roleService.insertRole(role));
+        return success(roleService.insertRole(role));
 
     }
 

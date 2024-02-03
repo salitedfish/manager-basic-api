@@ -35,8 +35,8 @@ public class SysJobLog extends BaseEntity
     @Excel(name = "日志信息")
     private String jobMessage;
 
-    /** 执行状态（0正常 1失败） */
-    @Excel(name = "执行状态", readConverterExp = "0=正常,1=失败")
+    /** 执行状态（0失败 1正常） */
+    @Excel(name = "执行状态", readConverterExp = "0=失败,1=正常")
     private String status;
 
     /** 异常信息 */

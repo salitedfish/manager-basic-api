@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysDeptSubAdminMapper">
+
+    <resultMap type="SysDept" id="SysDeptResult">
+        <id     property="deptId"     column="dept_id"     />
+        <id     property="deptCode"     column="dept_code" />
+        <result property="parentId"   column="parent_id"   />
+        <result property="ancestors"  column="ancestors"   />
+        <result property="deptName"   column="dept_name"   />
+        <result property="orderNum"   column="order_num"   />
+        <result property="leader"     column="leader"      />
+        <result property="phone"      column="phone"       />
+        <result property="email"      column="email"       />
+        <result property="status"     column="status"      />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="parentName" column="parent_name" />
+        <result property="createBy"   column="create_by"   />
+        <result property="createTime" column="create_time" />
+        <result property="updateBy"   column="update_by"   />
+        <result property="updateTime" column="update_time" />
+    </resultMap>
+
+    <select id="selectDeptSubAdminList" resultMap="SysDeptResult">
+        select d.dept_id, d.dept_code, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
+        from sys_sub_admin_dept ssad left join sys_dept d on ssad.dept_id = d.dept_id
+        where d.del_flag = '2' and ssad.user_id = #{userId}
+        <if test="dept.deptId != null and dept.deptId != ''">
+            AND dept_id = #{dept.deptId}
+        </if>
+        <if test="dept.parentId != null and dept.parentId != ''">
+            AND parent_id = #{dept.parentId}
+        </if>
+        <if test="dept.deptName != null and dept.deptName != ''">
+            AND dept_name like concat('%', #{dept.deptName}, '%')
+        </if>
+        <if test="dept.deptCode != null and dept.deptCode != ''">
+            AND dept_code like concat('%', #{dept.deptCode}, '%')
+        </if>
+        <if test="dept.status != null and dept.status != ''">
+            AND status = #{dept.status}
+        </if>
+        order by d.parent_id, d.order_num
+    </select>
+
+    <resultMap type="SysRole" id="SysRoleResult">
+        <id     property="roleId"             column="role_id"               />
+        <result property="roleName"           column="role_name"             />
+        <result property="roleKey"            column="role_key"              />
+        <result property="roleSort"           column="role_sort"             />
+        <result property="dataScope"          column="data_scope"            />
+        <result property="menuCheckStrictly"  column="menu_check_strictly"   />
+        <result property="deptCheckStrictly"  column="dept_check_strictly"   />
+        <result property="status"             column="status"                />
+        <result property="delFlag"            column="del_flag"              />
+        <result property="createBy"           column="create_by"             />
+        <result property="createByNickName"   column="create_by_nick_name"   />
+        <result property="createTime"         column="create_time"           />
+        <result property="updateBy"           column="update_by"             />
+        <result property="updateTime"         column="update_time"           />
+        <result property="remark"             column="remark"                />
+    </resultMap>
+
+    <select id="selectRoleListByDept" resultMap="SysRoleResult">
+        select distinct sr.role_id, sr.role_name, sr.role_key, sr.role_sort, sr.data_scope, sr.menu_check_strictly, sr.dept_check_strictly,
+        sr.status, sr.del_flag, sr.create_time, sr.remark, sr.create_by, su.nick_name as create_by_nick_name
+        from sys_dept_role sdr
+        inner join sys_sub_admin_role ssar on ssar.role_id = sdr.role_id
+        left join sys_role sr on sdr.role_id = sr.role_id
+        left join sys_dept sd on sd.dept_id = sdr.dept_id
+        left join sys_user su on sr.create_by = su.user_name
+        where sr.del_flag = '2' and sdr.dept_id = #{deptRole.deptId} and ssar.user_id = #{userId}
+        <if test="id != null and id != 0">
+            and sdr.id = #{deptRole.id}
+        </if>
+        <if test="deptRole.roleId != null and deptRole.roleId != 0">
+            and sr.role_id = #{deptRole.roleId}
+        </if>
+        <if test="deptRole.roleKey != null and deptRole.roleKey != ''">
+            and sr.role_key = #{deptRole.roleKey}
+        </if>
+        <if test="deptRole.roleName != null and deptRole.roleName != ''">
+            and sr.role_name = #{deptRole.roleName}
+        </if>
+        <if test="deptRole.createBy != null and deptRole.createBy != ''">
+            and sr.create_by = #{deptRole.createBy}
+        </if>
+        <if test="deptRole.params.beginTime != null and deptRole.params.beginTime != ''"><!-- 开始时间检索 -->
+            and date_format(sr.create_time,'%y%m%d') &gt;= date_format(#{deptRole.params.beginTime},'%y%m%d')
+        </if>
+        <if test="deptRole.params.endTime != null and deptRole.params.endTime != ''"><!-- 结束时间检索 -->
+            and date_format(sr.create_time,'%y%m%d') &lt;= date_format(#{deptRole.params.endTime},'%y%m%d')
+        </if>
+    </select>
+</mapper>

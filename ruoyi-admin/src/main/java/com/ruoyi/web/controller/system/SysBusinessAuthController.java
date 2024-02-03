@@ -10,6 +10,8 @@ import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.service.ISysBusinessAuthService;
+import com.ruoyi.system.service.ISysBusinessAuthSubAdminService;
+import com.ruoyi.system.service.ISysBusinessSubAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +33,11 @@ public class SysBusinessAuthController extends BaseController {
     @Autowired
     private ISysBusinessAuthService businessAuthService;
 
+    @Autowired
+    private ISysBusinessAuthSubAdminService businessAuthSubAdminService;
+
+
+
     /**
      * 获取业务权限列表
      */
@@ -38,7 +46,13 @@ public class SysBusinessAuthController extends BaseController {
     public TableDataInfo list(SysBusinessAuth sysBusinessAuth)
     {
         startPage();
-        List<SysBusinessAuth> list = businessAuthService.selectBusinessAuthList(sysBusinessAuth);
+        List<SysBusinessAuth> list = new ArrayList<>();
+        if(StringUtils.isNotNull(sysBusinessAuth.getSubAdmin())) {
+            list = businessAuthSubAdminService.selectBusinessAuthList(sysBusinessAuth);
+        } else {
+            list = businessAuthService.selectBusinessAuthList(sysBusinessAuth);
+        }
+
         return getDataTable(list);
     }
 
