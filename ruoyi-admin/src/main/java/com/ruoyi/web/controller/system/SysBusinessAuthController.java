@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.NotBlankException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.service.ISysBusinessAuthService;
@@ -64,23 +65,23 @@ public class SysBusinessAuthController extends BaseController {
     @PostMapping("/add")
     public AjaxResult insertBusinessAuth(@RequestBody List<SysBusinessAuth> sysBusinessAuthList) {
         if(StringUtils.isEmpty(sysBusinessAuthList)) {
-            return error("列表不能为空");
+            throw new NotBlankException("list");
         }
         for(SysBusinessAuth sba: sysBusinessAuthList) {
-            if(StringUtils.isEmpty(sba.getBusinessId())) {
-                return error("businessId不能为空");
+            if(StringUtils.isBlank(sba.getBusinessId())) {
+                throw new NotBlankException("businessId");
             }
-            if(StringUtils.isEmpty(sba.getOrgId())) {
-                return error("orgId不能为空");
+            if(StringUtils.isBlank(sba.getOrgId())) {
+                throw new NotBlankException("orgId");
             }
-            if(StringUtils.isEmpty(sba.getOrgType())) {
-                return error("orgType不能为空");
+            if(StringUtils.isBlank(sba.getOrgType())) {
+                throw new NotBlankException("orgType");
             }
-            if(StringUtils.isEmpty(sba.getManageOrgId())) {
-                return error("manageOrgId不能为空");
+            if(StringUtils.isBlank(sba.getManageOrgId())) {
+                throw new NotBlankException("manageOrgId");
             }
-            if(StringUtils.isEmpty(sba.getManageOrgType())) {
-                return error("manageOrgType不能为空");
+            if(StringUtils.isBlank(sba.getManageOrgType())) {
+                throw new NotBlankException("manageOrgType");
             }
         }
         return success(businessAuthService.insertBusinessAuth(sysBusinessAuthList));
@@ -94,7 +95,7 @@ public class SysBusinessAuthController extends BaseController {
     @DeleteMapping("/delete")
     public AjaxResult deleteBusinessAuth(@RequestBody List<Long> businessAuthIds) {
         if(StringUtils.isEmpty(businessAuthIds)) {
-            return error("列表不能为空");
+            throw new NotBlankException("list");
         }
         return success(businessAuthService.deleteBusinessAuth(businessAuthIds));
     }

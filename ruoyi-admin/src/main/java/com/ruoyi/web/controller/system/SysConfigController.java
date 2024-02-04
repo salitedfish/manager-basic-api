@@ -2,6 +2,9 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -85,7 +88,7 @@ public class SysConfigController extends BaseController
     {
         if (!configService.checkConfigKeyUnique(config))
         {
-            return error("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            throw new ServiceException(MessageUtils.message("config.key.exists", new Object[] { config.getConfigName() }));
         }
         config.setCreateBy(getUsername());
         return toAjax(configService.insertConfig(config));
@@ -101,7 +104,7 @@ public class SysConfigController extends BaseController
     {
         if (!configService.checkConfigKeyUnique(config))
         {
-            return error("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            throw new ServiceException(MessageUtils.message("config.key.exists", new Object[] { config.getConfigName() }));
         }
         config.setUpdateBy(getUsername());
         return toAjax(configService.updateConfig(config));

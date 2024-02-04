@@ -8,6 +8,9 @@ import com.ruoyi.common.core.domain.entity.SysBusiness;
 import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.exception.NotBlankException;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.system.domain.SysDeptRole;
 import com.ruoyi.system.service.ISysDeptSubAdminService;
 import io.swagger.annotations.Api;
@@ -108,11 +111,11 @@ public class SysDeptController extends BaseController
     {
         if (!deptService.checkDeptNameUnique(dept))
         {
-            return error("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
+            throw new ServiceException(MessageUtils.message("dept.deptName.exists", new Object[] { dept.getDeptName() }));
         }
         if (!deptService.checkDeptCodeUnique(dept))
         {
-            return error("新增部门'" + dept.getDeptCode() + "'失败，部门编码已存在");
+            throw new ServiceException(MessageUtils.message("dept.deptCode.exists", new Object[] { dept.getDeptCode() }));
         }
         dept.setCreateBy(getUsername());
         if(StringUtils.isNotNull(dept.getSubAdmin())) {
@@ -136,19 +139,19 @@ public class SysDeptController extends BaseController
         deptService.checkDeptDataScope(deptId);
         if (!deptService.checkDeptNameUnique(dept))
         {
-            return error("修改部门'" + dept.getDeptName() + "'失败，部门名称已存在");
+            throw new ServiceException(MessageUtils.message("dept.deptName.exists", new Object[] { dept.getDeptName() }));
         }
         if (!deptService.checkDeptCodeUnique(dept))
         {
-            return error("修改部门'" + dept.getDeptCode() + "'失败，部门编码已存在");
+            throw new ServiceException(MessageUtils.message("dept.deptCode.exists", new Object[] { dept.getDeptCode() }));
         }
         else if (dept.getParentId().equals(deptId))
         {
-            return error("修改部门'" + dept.getDeptName() + "'失败，上级部门不能是自己");
+            throw new ServiceException(MessageUtils.message("dept.parent.cannot.self"));
         }
         else if (StringUtils.equals(UserConstants.DEPT_DISABLE, dept.getStatus()) && deptService.selectNormalChildrenDeptById(deptId) > 0)
         {
-            return error("该部门包含未停用的子部门！");
+            throw new ServiceException(MessageUtils.message("dept.has.children.used"));
         }
         dept.setUpdateBy(getUsername());
         return toAjax(deptService.updateDept(dept));
@@ -166,11 +169,11 @@ public class SysDeptController extends BaseController
     {
         if (deptService.hasChildByDeptId(deptId))
         {
-            return warn("存在下级部门,不允许删除");
+            return warn(MessageUtils.message("dept.delete.has.children"));
         }
         if (deptService.checkDeptExistUser(deptId))
         {
-            return warn("部门存在用户,不允许删除");
+            return warn(MessageUtils.message("dept.delete.has.user"));
         }
         deptService.checkDeptDataScope(deptId);
         return toAjax(deptService.deleteDeptById(deptId));
@@ -210,11 +213,11 @@ public class SysDeptController extends BaseController
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult insertDeptRoleList(@RequestBody SysDeptRole sdr) {
-        if(StringUtils.isEmpty(sdr.getDeptId())) {
-            return error("deptId不能为空");
+        if(StringUtils.isBlank(sdr.getDeptId())) {
+            throw new NotBlankException("deptId");
         }
         if(StringUtils.isEmpty(sdr.getRoleIds())) {
-            return error("roleIds不能为空");
+            throw new NotBlankException("roleIds");
         }
         return success(deptService.insertDeptRole(sdr));
     }
@@ -223,11 +226,11 @@ public class SysDeptController extends BaseController
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult deleteDeptRoleList(@RequestBody SysDeptRole sdr) {
-        if(StringUtils.isEmpty(sdr.getDeptId())) {
-            return error("deptId不能为空");
+        if(StringUtils.isBlank(sdr.getDeptId())) {
+            throw new NotBlankException("deptId");
         }
         if(StringUtils.isEmpty(sdr.getRoleIds())) {
-            return error("roleIds不能为空");
+            throw new NotBlankException("roleIds");
         }
         return success(deptService.deleteDeptRoleList(sdr));
     }

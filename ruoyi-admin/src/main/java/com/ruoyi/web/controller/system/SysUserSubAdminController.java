@@ -53,18 +53,18 @@ public class SysUserSubAdminController extends BaseController {
     @Autowired
     private ISysPostService postService;
 
-    /**
-     * 获取用户列表
-     */
-//    @PreAuthorize("@ss.hasPermi('system:user:subAdmin:list')")
-    @ApiOperation("分级管理-获取用户列表")
-    @GetMapping("/list")
-    public TableDataInfo list(SysUser user)
-    {
-        startPage();
-        List<SysUser> list = userSubAdminService.selectUserList(user);
-        return getDataTable(list);
-    }
+//    /**
+//     * 获取用户列表
+//     */
+////    @PreAuthorize("@ss.hasPermi('system:user:subAdmin:list')")
+//    @ApiOperation("分级管理-获取用户列表")
+//    @GetMapping("/list")
+//    public TableDataInfo list(SysUser user)
+//    {
+//        startPage();
+//        List<SysUser> list = userSubAdminService.selectUserList(user);
+//        return getDataTable(list);
+//    }
 
 //    /**
 //     * 导出用户列表

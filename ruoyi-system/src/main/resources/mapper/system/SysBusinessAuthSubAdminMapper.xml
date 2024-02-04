@@ -86,21 +86,21 @@
                 (
                 (manage_org_type = 0 AND (manage_org_id in (select dept_id from sys_sub_admin_dept ssad where ssad.user_id = #{userId})))
                 or
-                (manage_org_type = 1 AND ((select dept_id from sys_user sur where sur.userId = manage_org_id ) in (select dept_id from sys_sub_admin_dept ssad where ssad.user_id = #{userId})))
+                (manage_org_type = 1 AND ((select dept_id from sys_user sur where sur.user_id = manage_org_id ) in (select dept_id from sys_sub_admin_dept ssad where ssad.user_id = #{userId})))
                 )
 
             </if>
-            <if test="manageOrgId != null and manageOrgId != ''">
-                AND manage_org_id = #{manageOrgId}
+            <if test="businessAuth.manageOrgId != null and businessAuth.manageOrgId != ''">
+                AND manage_org_id = #{businessAuth.manageOrgId}
             </if>
-            <if test="createBy != null and createBy != ''">
-                and sr.create_by = #{createBy}
+            <if test="businessAuth.createBy != null and businessAuth.createBy != ''">
+                and sr.create_by = #{businessAuth.createBy}
             </if>
-            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
-                and date_format(create_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+            <if test="businessAuth.params.beginTime != null and businessAuth.params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(create_time,'%y%m%d') &gt;= date_format(#{businessAuth.params.beginTime},'%y%m%d')
             </if>
-            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
-                and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+            <if test="businessAuth.params.endTime != null and businessAuth.params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(create_time,'%y%m%d') &lt;= date_format(#{businessAuth.params.endTime},'%y%m%d')
             </if>
         </where>
     </select>

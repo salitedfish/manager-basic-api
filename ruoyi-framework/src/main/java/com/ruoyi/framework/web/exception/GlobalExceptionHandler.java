@@ -1,6 +1,8 @@
 package com.ruoyi.framework.web.exception;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.common.exception.NotBlankException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
@@ -59,6 +61,16 @@ public class GlobalExceptionHandler
         log.error(e.getMessage(), e);
         Integer code = e.getCode();
         return StringUtils.isNotNull(code) ? AjaxResult.error(code, e.getMessage()) : AjaxResult.error(e.getMessage());
+    }
+
+    /**
+     * 非空异常(非空异常都当作警告返回给前台)
+     */
+    @ExceptionHandler(NotBlankException.class)
+    public AjaxResult handleNotBlankException(NotBlankException e, HttpServletRequest request)
+    {
+        log.warn(e.getMessage(), e);
+        return AjaxResult.warn(e.getMessage());
     }
 
     /**

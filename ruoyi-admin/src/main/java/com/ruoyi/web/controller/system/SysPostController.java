@@ -4,6 +4,9 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.entity.SysRole;
+import com.ruoyi.common.exception.NotBlankException;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysDeptRole;
 import com.ruoyi.system.domain.SysPostRole;
@@ -88,11 +91,11 @@ public class SysPostController extends BaseController
     {
         if (!postService.checkPostNameUnique(post))
         {
-            return error("新增岗位'" + post.getPostName() + "'失败，岗位名称已存在");
+            throw new ServiceException(MessageUtils.message("post.postName.exists", new Object[] { post.getPostName() }));
         }
         else if (!postService.checkPostCodeUnique(post))
         {
-            return error("新增岗位'" + post.getPostName() + "'失败，岗位编码已存在");
+            throw new ServiceException(MessageUtils.message("post.postCode.exists", new Object[] { post.getPostCode() }));
         }
         post.setCreateBy(getUsername());
         return toAjax(postService.insertPost(post));
@@ -109,11 +112,11 @@ public class SysPostController extends BaseController
     {
         if (!postService.checkPostNameUnique(post))
         {
-            return error("修改岗位'" + post.getPostName() + "'失败，岗位名称已存在");
+            throw new ServiceException(MessageUtils.message("post.postName.exists", new Object[] { post.getPostName() }));
         }
         else if (!postService.checkPostCodeUnique(post))
         {
-            return error("修改岗位'" + post.getPostName() + "'失败，岗位编码已存在");
+            throw new ServiceException(MessageUtils.message("post.postCode.exists", new Object[] { post.getPostCode() }));
         }
         post.setUpdateBy(getUsername());
         return toAjax(postService.updatePost(post));
@@ -153,11 +156,11 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult insertPostRoleList(@RequestBody SysPostRole spr) {
-        if(StringUtils.isEmpty(spr.getPostId())) {
-            return error("postId不能为空");
+        if(StringUtils.isBlank(spr.getPostId())) {
+            throw new NotBlankException("postId");
         }
         if(StringUtils.isEmpty(spr.getRoleIds())) {
-            return error("roleIds不能为空");
+            throw new NotBlankException("roleIds");
         }
         return success(postService.insertPostRoleList(spr));
     }
@@ -166,11 +169,11 @@ public class SysPostController extends BaseController
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult deletePostRoleList(@RequestBody SysPostRole spr) {
-        if(StringUtils.isEmpty(spr.getPostId())) {
-            return error("postId不能为空");
+        if(StringUtils.isBlank(spr.getPostId())) {
+            throw new NotBlankException("postId");
         }
         if(StringUtils.isEmpty(spr.getRoleIds())) {
-            return error("roleIds不能为空");
+            throw new NotBlankException("roleIds");
         }
         return success(postService.deletePostRoleList(spr));
     }

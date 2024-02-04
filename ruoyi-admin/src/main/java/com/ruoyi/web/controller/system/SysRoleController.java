@@ -5,6 +5,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.common.core.domain.TreeSelect;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.system.domain.SysDeptRole;
 import com.ruoyi.system.service.ISysRoleSubAdminService;
 import io.swagger.annotations.Api;
@@ -116,11 +118,11 @@ public class SysRoleController extends BaseController
     {
         if (!roleService.checkRoleNameUnique(role))
         {
-            return error("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            throw new ServiceException(MessageUtils.message("user.roleName.exists", new Object[] { role.getRoleName() }));
         }
         else if (!roleService.checkRoleKeyUnique(role))
         {
-            return error("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            throw new ServiceException(MessageUtils.message("user.roleKey.exists", new Object[] { role.getRoleKey() }));
         }
         role.setCreateBy(getUsername());
         return success(roleService.insertRole(role));
@@ -140,11 +142,11 @@ public class SysRoleController extends BaseController
         roleService.checkRoleDataScope(role.getRoleId());
         if (!roleService.checkRoleNameUnique(role))
         {
-            return error("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            throw new ServiceException(MessageUtils.message("user.roleName.exists", new Object[] { role.getRoleName() }));
         }
         else if (!roleService.checkRoleKeyUnique(role))
         {
-            return error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            throw new ServiceException(MessageUtils.message("user.roleKey.exists", new Object[] { role.getRoleKey() }));
         }
         role.setUpdateBy(getUsername());
         

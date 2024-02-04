@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.*;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.NotBlankException;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.*;
 import com.ruoyi.system.service.ISysSubAdminService;
@@ -44,11 +45,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/dept/add")
     public AjaxResult deptAdd(@RequestBody SysSubAdminDept subAdminDept) {
-        if(StringUtils.isNull(subAdminDept.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminDept.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminDept.getDeptIds())) {
-            return error("deptIds不能为空");
+            throw new NotBlankException("deptIds");
         }
         int i = subAdminService.insertSubAdminDept(subAdminDept);
         return success(i);
@@ -58,11 +59,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/dept/delete")
     public AjaxResult deptDelete(@RequestBody SysSubAdminDept subAdminDept) {
-        if(StringUtils.isNull(subAdminDept.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminDept.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminDept.getDeptIds())) {
-            return error("deptIds不能为空");
+            throw new NotBlankException("deptIds");
         }
         int i = subAdminService.deleteSubAdminDept(subAdminDept);
         return success(i);
@@ -83,11 +84,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/post/add")
     public AjaxResult postAdd(@RequestBody SysSubAdminPost subAdminPost) {
-        if(StringUtils.isNull(subAdminPost.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminPost.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminPost.getPostIds())) {
-            return error("postIds不能为空");
+            throw new NotBlankException("postIds");
         }
         int i = subAdminService.insertSubAdminPost(subAdminPost);
         return success(i);
@@ -97,11 +98,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/post/delete")
     public AjaxResult postDelete(@RequestBody SysSubAdminPost subAdminPost) {
-        if(StringUtils.isNull(subAdminPost.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminPost.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminPost.getPostIds())) {
-            return error("postIds不能为空");
+            throw new NotBlankException("postIds");
         }
         int i = subAdminService.deleteSubAdminPost(subAdminPost);
         return success(i);
@@ -122,11 +123,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult roleAdd(@RequestBody SysSubAdminRole subAdminRole) {
-        if(StringUtils.isNull(subAdminRole.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminRole.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminRole.getRoleIds())) {
-            return error("roleIds不能为空");
+            throw new NotBlankException("roleIds");
         }
         int i = subAdminService.insertSubAdminRole(subAdminRole);
         return success(i);
@@ -136,11 +137,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult postDelete(@RequestBody SysSubAdminRole subAdminRole) {
-        if(StringUtils.isNull(subAdminRole.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminRole.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminRole.getRoleIds())) {
-            return error("roleIds不能为空");
+            throw new NotBlankException("roleIds");
         }
         int i = subAdminService.deleteSubAdminRole(subAdminRole);
         return success(i);
@@ -161,11 +162,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/business/add")
     public AjaxResult businessAdd(@RequestBody SysSubAdminBusiness subAdminBusiness) {
-        if(StringUtils.isNull(subAdminBusiness.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminBusiness.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminBusiness.getBusinessIds())) {
-            return error("businessIds不能为空");
+            throw new NotBlankException("businessIds");
         }
         int i = subAdminService.insertSubAdminBusiness(subAdminBusiness);
         return success(i);
@@ -175,11 +176,11 @@ public class SysSubAdminController extends BaseController {
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/business/delete")
     public AjaxResult businessDelete(@RequestBody SysSubAdminBusiness subAdminBusiness) {
-        if(StringUtils.isNull(subAdminBusiness.getUserId())) {
-            return error("userId不能为空");
+        if(StringUtils.isBlank(subAdminBusiness.getUserId())) {
+            throw new NotBlankException("userId");
         }
         if(StringUtils.isEmpty(subAdminBusiness.getBusinessIds())) {
-            return error("businessIds不能为空");
+            throw new NotBlankException("businessIds");
         }
         int i = subAdminService.deleteSubAdminBusiness(subAdminBusiness);
         return success(i);

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.system.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -154,15 +156,15 @@ public class SysUserController extends BaseController
     {
         if (!userService.checkUserNameUnique(user))
         {
-            return error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+            throw new ServiceException(MessageUtils.message("user.userName.exists", new Object[] { user.getUserName() }));
         }
         else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user))
         {
-            return error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+            throw new ServiceException(MessageUtils.message("user.phone.exists", new Object[] { user.getPhonenumber() }));
         }
         else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user))
         {
-            return error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            throw new ServiceException(MessageUtils.message("user.email.exists", new Object[] { user.getEmail() }));
         }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
@@ -182,15 +184,15 @@ public class SysUserController extends BaseController
         userService.checkUserDataScope(user.getUserId());
         if (!userService.checkUserNameUnique(user))
         {
-            return error("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
+            throw new ServiceException(MessageUtils.message("user.userName.exists", new Object[] { user.getUserName() }));
         }
         else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user))
         {
-            return error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
+            throw new ServiceException(MessageUtils.message("user.phone.exists", new Object[] { user.getPhonenumber() }));
         }
         else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user))
         {
-            return error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            throw new ServiceException(MessageUtils.message("user.email.exists", new Object[] { user.getEmail() }));
         }
         user.setUpdateBy(getUsername());
 
@@ -214,7 +216,7 @@ public class SysUserController extends BaseController
     {
         if (ArrayUtils.contains(userIds, getUserId()))
         {
-            return error("当前用户不能删除");
+            return error(MessageUtils.message("user.delete.current.user"));
         }
         return toAjax(userService.deleteUserByIds(userIds));
     }
