@@ -45,7 +45,6 @@ public class SysPostServiceImpl implements ISysPostService
      * @return 岗位信息集合
      */
     @Override
-    @DataScope(businessCode = "system/post/list", deptAlias = "su", userAlias = "su")
     public List<SysPost> selectPostList(SysPost post)
     {
         return postMapper.selectPostList(post);

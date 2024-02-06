@@ -15,6 +15,13 @@ public interface ISysUserSubAdminService {
     public List<SysUser> selectUserList(SysUser user);
 
     /**
+     * 校验用户是否有数据权限
+     *
+     * @param userId 用户id
+     */
+    public void checkUserDataScope(String userId);
+
+    /**
      * 修改用户信息
      *
      * @param user 用户信息

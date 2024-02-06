@@ -29,6 +29,7 @@
         from sys_sub_admin_dept suad
         left join sys_dept sd on suad.dept_id = sd.dept_id
         where sd.del_flag = '2' and suad.user_id = #{userId}
+        order by suad.create_time desc
     </select>
 
     <insert id="insertSubAdminDept" parameterType="List">
@@ -49,7 +50,7 @@
         delete from sys_sub_admin_dept
         where concat(user_id, dept_id) in
         <foreach collection="list" item="item" open="(" separator="," close=")">
-            concat(#{item.userId, item.deptId})
+            concat(#{item.userId}, #{item.deptId})
         </foreach>
     </delete>
 
@@ -72,6 +73,7 @@
         from sys_sub_admin_post suap
                  left join sys_post sp on suap.post_id = sp.post_id
         where  suap.user_id = #{userId}
+        order by suap.create_time desc
     </select>
 
     <insert id="insertSubAdminPost" parameterType="List">
@@ -92,7 +94,7 @@
         delete from sys_sub_admin_post
         where concat(user_id, post_id) in
         <foreach collection="list" item="item" open="(" separator="," close=")">
-            concat(#{item.userId, item.postId})
+            concat(#{item.userId}, #{item.postId})
         </foreach>
     </delete>
 
@@ -120,6 +122,8 @@
         from sys_sub_admin_role suar
                  left join sys_role r on suar.role_id = r.role_id
         where r.del_flag = '2' and suar.user_id = #{userId}
+        order by suar.create_time desc
+
     </select>
 
     <insert id="insertSubAdminRole" parameterType="List">
@@ -140,7 +144,7 @@
         delete from sys_sub_admin_role
         where concat(user_id, role_id) in
         <foreach collection="list" item="item" open="(" separator="," close=")">
-            concat(#{item.userId, item.roleId})
+            concat(#{item.userId}, #{item.roleId})
         </foreach>
     </delete>
 
@@ -159,6 +163,8 @@
         from sys_sub_admin_business suab
                  left join sys_business sb on suab.business_id = sb.business_id
         where suab.user_id = #{userId}
+        order by suab.create_time desc
+
     </select>
 
     <insert id="insertSubAdminBusiness" parameterType="List">
@@ -179,7 +185,7 @@
         delete from sys_sub_admin_business
         where concat(user_id, business_id) in
         <foreach collection="list" item="item" open="(" separator="," close=")">
-            concat(#{item.userId, item.businessId})
+            concat(#{item.userId}, #{item.businessId})
         </foreach>
     </delete>
 

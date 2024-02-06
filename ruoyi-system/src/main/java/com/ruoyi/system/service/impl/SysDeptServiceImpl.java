@@ -234,8 +234,9 @@ public class SysDeptServiceImpl implements ISysDeptService
      * @return
      */
     public boolean checkDeptCodeUnique(SysDept dept) {
+        String deptId = StringUtils.isNull(dept.getDeptId()) ? "" : dept.getDeptId();
         SysDept info = deptMapper.checkDeptCodeUnique(dept.getDeptCode());
-        if (StringUtils.isNotNull(info))
+        if (StringUtils.isNotNull(info) && (!info.getDeptId().equals(deptId)))
         {
             return UserConstants.NOT_UNIQUE;
         }

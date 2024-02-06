@@ -3,7 +3,10 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.Set;
 
+import com.ruoyi.common.core.domain.entity.SysBusinessAuth;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.system.service.ISysBusinessAuthSubAdminService;
+import com.ruoyi.system.service.ISysBusinessSubAdminService;
 import com.ruoyi.system.service.ISysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +43,9 @@ public class SysLoginController
     @Autowired
     private ISysRoleService roleService;
 
+    @Autowired
+    private ISysBusinessAuthSubAdminService businessAuthSubAdminService;
+
     /**
      * 登录方法
      * 
@@ -68,14 +74,18 @@ public class SysLoginController
         LoginUser loginUser = SecurityUtils.getLoginUser();
         SysUser user = loginUser.getUser();
         // 角色集合
-//        Set<String> roles = permissionService.getRolePermission(user);
+        // Set<String> roles = permissionService.getRolePermission(user);
         Set<String> roles = roleService.selectALLRolesKeyByUser(user);
-        // 权限集合
+        // 菜单权限集合
         Set<String> permissions = permissionService.getMenuPermission(user);
         AjaxResult ajax = AjaxResult.success();
+        // 用户信息
         ajax.put("user", user);
+        // 角色集合
         ajax.put("roles", roles);
+        // 菜单权限集合
         ajax.put("permissions", permissions);
+        // 业务权限集合
         ajax.put("businessAuths", loginUser.getBusinessAuthList());
         return ajax;
     }

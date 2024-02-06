@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.validation.Validator;
 
 import com.ruoyi.common.utils.uuid.IdUtils;
+import com.ruoyi.system.service.ISysUserSubAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,9 @@ public class SysUserServiceImpl implements ISysUserService
     @Autowired
     protected Validator validator;
 
+    @Autowired
+    private ISysUserSubAdminService userSubAdminService;
+
     /**
      * 根据条件分页查询用户列表
      * 
@@ -83,7 +87,6 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 用户信息集合信息
      */
     @Override
-    @DataScope(deptAlias = "d", userAlias = "u", businessCode = "system/user/list")
     public List<SysUser> selectAllocatedList(SysUser user)
     {
         return userMapper.selectAllocatedList(user);
@@ -96,7 +99,6 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 用户信息集合信息
      */
     @Override
-    @DataScope(deptAlias = "d", userAlias = "u", businessCode = "system/user/list")
     public List<SysUser> selectUnallocatedList(SysUser user)
     {
         return userMapper.selectUnallocatedList(user);
@@ -243,16 +245,16 @@ public class SysUserServiceImpl implements ISysUserService
     @Override
     public void checkUserDataScope(String userId)
     {
-        if (!SysUser.isAdmin(SecurityUtils.getUserId()))
-        {
-            SysUser user = new SysUser();
-            user.setUserId(userId);
-            List<SysUser> users = SpringUtils.getAopProxy(this).selectUserList(user);
-            if (StringUtils.isEmpty(users))
-            {
-                throw new ServiceException("没有权限访问用户数据！");
-            }
-        }
+//        if (!SysUser.isAdmin(SecurityUtils.getUserId()))
+//        {
+//            SysUser user = new SysUser();
+//            user.setUserId(userId);
+//            List<SysUser> users = SpringUtils.getAopProxy(this).selectUserList(user);
+//            if (StringUtils.isEmpty(users))
+//            {
+//                throw new ServiceException(MessageUtils.message("user.action.user.no.auth"));
+//            }
+//        }
     }
 
     /**
@@ -490,7 +492,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 结果
      */
     @Override
-    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName)
+    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName, boolean subAdmin)
     {
         if (StringUtils.isNull(userList) || userList.size() == 0)
         {
@@ -520,7 +522,12 @@ public class SysUserServiceImpl implements ISysUserService
                 {
                     BeanValidators.validateWithException(validator, user);
                     checkUserAllowed(u);
-                    checkUserDataScope(u.getUserId());
+                    // 如果是子管理员则查询子管理员的数据权限，否则查询通用的权限
+                    if(StringUtils.isNotNull(subAdmin)) {
+                        userSubAdminService.checkUserDataScope(u.getUserId());
+                    } else {
+                        checkUserDataScope(u.getUserId());
+                    }
                     user.setUserId(u.getUserId());
                     user.setUpdateBy(operName);
                     userMapper.updateUser(user);

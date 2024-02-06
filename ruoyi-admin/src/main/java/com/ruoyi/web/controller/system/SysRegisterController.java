@@ -1,5 +1,7 @@
 package com.ruoyi.web.controller.system;
 
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +32,7 @@ public class SysRegisterController extends BaseController
     {
         if (!("true".equals(configService.selectConfigByKey("sys.account.registerUser"))))
         {
-            return error("当前系统没有开启注册功能！");
+            throw new ServiceException(MessageUtils.message("register.not.register"));
         }
         String msg = registerService.register(user);
         return StringUtils.isEmpty(msg) ? success() : error(msg);

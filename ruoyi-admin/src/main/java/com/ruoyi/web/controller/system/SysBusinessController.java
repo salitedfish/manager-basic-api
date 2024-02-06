@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class SysBusinessController extends BaseController {
     /**
      * 获取业务列表
      */
-    @ApiOperation("获取业务权限列表")
+    @ApiOperation("获取业务列表")
     @GetMapping("/list")
     public TableDataInfo list(SysBusiness business)
     {

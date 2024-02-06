@@ -97,6 +97,12 @@
                 </if>
 
             </if>
+            <if test="orgType != null and orgType != ''">
+                AND org_type = #{orgType}
+            </if>
+            <if test="orgName != null and orgName != ''">
+                AND org.name like concat(concat('%', #{orgName}), '%')
+            </if>
             <if test="manageOrgId != null and manageOrgId != ''">
                 AND manage_org_id = #{manageOrgId}
             </if>
@@ -110,6 +116,7 @@
                 and date_format(create_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
             </if>
         </where>
+        order by sba.create_time desc
     </select>
 
     <insert id="insertBusinessAuth" parameterType="List">

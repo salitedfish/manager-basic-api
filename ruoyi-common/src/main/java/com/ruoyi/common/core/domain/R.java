@@ -2,6 +2,7 @@ package com.ruoyi.common.core.domain;
 
 import java.io.Serializable;
 import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.utils.MessageUtils;
 
 /**
  * 响应信息主体
@@ -26,12 +27,12 @@ public class R<T> implements Serializable
 
     public static <T> R<T> ok()
     {
-        return restResult(null, SUCCESS, "操作成功");
+        return restResult(null, SUCCESS, MessageUtils.message("base.action.success"));
     }
 
     public static <T> R<T> ok(T data)
     {
-        return restResult(data, SUCCESS, "操作成功");
+        return restResult(data, SUCCESS, MessageUtils.message("base.action.success"));
     }
 
     public static <T> R<T> ok(T data, String msg)
@@ -41,7 +42,7 @@ public class R<T> implements Serializable
 
     public static <T> R<T> fail()
     {
-        return restResult(null, FAIL, "操作失败");
+        return restResult(null, FAIL, MessageUtils.message("base.action.fail"));
     }
 
     public static <T> R<T> fail(String msg)
@@ -51,7 +52,7 @@ public class R<T> implements Serializable
 
     public static <T> R<T> fail(T data)
     {
-        return restResult(data, FAIL, "操作失败");
+        return restResult(data, FAIL, MessageUtils.message("base.action.fail"));
     }
 
     public static <T> R<T> fail(T data, String msg)

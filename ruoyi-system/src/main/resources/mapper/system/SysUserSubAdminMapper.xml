@@ -30,6 +30,7 @@
 
     <resultMap id="deptResult" type="SysDept">
         <id     property="deptId"    column="dept_id"     />
+        <id     property="deptCode"    column="dept_code"     />
         <result property="parentId"  column="parent_id"   />
         <result property="deptName"  column="dept_name"   />
         <result property="ancestors" column="ancestors"   />
@@ -47,23 +48,27 @@
         <result property="status"       column="role_status"    />
     </resultMap>
 
-    <sql id="selectUserVo">
-        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
-               d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.status as dept_status,
-               r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status,
-               concat(concat(d.ancestors, ','), u.dept_id) as dept_full_path_id
-        from sys_user u
-                 left join sys_dept d on u.dept_id = d.dept_id
-                 left join sys_user_role ur on u.user_id = ur.user_id
-                 left join sys_role r on r.role_id = ur.role_id
-    </sql>
+<!--    <sql id="selectUserVo">-->
+<!--        select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,-->
+<!--               d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.status as dept_status,-->
+<!--               r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status,-->
+<!--               concat(concat(d.ancestors, ','), u.dept_id) as dept_full_path_id-->
+<!--        from sys_user u-->
+<!--                 left join sys_dept d on u.dept_id = d.dept_id-->
+<!--                 left join sys_user_role ur on u.user_id = ur.user_id-->
+<!--                 left join sys_role r on r.role_id = ur.role_id-->
+<!--    </sql>-->
 
     <select id="selectUserList"  resultMap="SysUserResult">
-        select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader, concat(concat(d.ancestors, ','), u.dept_id) as dept_full_path_id
+        select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
+               d.dept_id, d.dept_code, d.dept_name, d.leader, concat(concat(d.ancestors, ','), u.dept_id) as dept_full_path_id
         from sys_user u
         left join sys_dept d on u.dept_id = d.dept_id
         inner join sys_sub_admin_dept ssad on ssad.dept_id = d.dept_id
         where u.del_flag = '2' and ssad.user_id = #{userId}
+        <if test="sysUser.searchValue != null and sysUser.searchValue != ''">
+            AND u.user_name like concat('%', #{sysUser.searchValue}, '%') or u.nick_name like concat('%', #{sysUser.searchValue}, '%') or u.email like concat('%', #{sysUser.searchValue}, '%') or u.phonenumber like concat('%', #{sysUser.searchValue}, '%')
+        </if>
         <if test="sysUser.userId != null and sysUser.userId != ''">
             AND u.user_id = #{sysUser.userId}
         </if>

@@ -202,7 +202,7 @@ public interface ISysUserService
      * @param operName 操作用户
      * @return 结果
      */
-    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName);
+    public String importUser(List<SysUser> userList, Boolean isUpdateSupport, String operName,boolean subAdmin);
 
     /**
      * 通过部门id去获取所有相关人员

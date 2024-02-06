@@ -85,7 +85,7 @@ public class SysUserSubAdminController extends BaseController {
     /**
      * 根据用户编号获取详细信息
      */
-//    @PreAuthorize("@ss.hasPermi('system:user:subAdmin:query')")
+    @PreAuthorize("@ss.hasPermi('system:subAdminUser:query')")
     @ApiOperation("分级管理-根据用户编号获取详细信息")
     @GetMapping(value = { "/", "/{userId}" })
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) String userId)
@@ -97,6 +97,7 @@ public class SysUserSubAdminController extends BaseController {
         ajax.put("posts", sps);
         if (StringUtils.isNotNull(userId))
         {
+            userSubAdminService.checkUserDataScope(userId);
             SysUser sysUser = userService.selectUserById(userId);
             List<String> postIds = postService.selectPostListByUserId(userId).stream().filter(id -> {
                 Boolean exits = false;

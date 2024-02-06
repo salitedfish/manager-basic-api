@@ -13,6 +13,7 @@ import com.ruoyi.system.service.ISysSubAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class SysSubAdminController extends BaseController {
      * 子管理员部门相关的增删查
      */
     @ApiOperation("分级管理-查询分配的部门列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:list')")
     @GetMapping("/dept/list")
     public TableDataInfo deptList(SysSubAdminDept subAdminDept) {
         startPage();
@@ -73,6 +75,7 @@ public class SysSubAdminController extends BaseController {
      * 子管理员岗位相关的增删查
      */
     @ApiOperation("分级管理-查询分配的岗位列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:list')")
     @GetMapping("/post/list")
     public TableDataInfo postList(SysSubAdminPost subAdminPost) {
         startPage();
@@ -112,6 +115,7 @@ public class SysSubAdminController extends BaseController {
      * 子管理员角色相关的增删查
      */
     @ApiOperation("分级管理-查询分配的角色列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:list')")
     @GetMapping("/role/list")
     public TableDataInfo roleList(SysSubAdminRole subAdminRole) {
         startPage();
@@ -151,6 +155,7 @@ public class SysSubAdminController extends BaseController {
      * 子管理员业务相关的增删查
      */
     @ApiOperation("分级管理-查询分配的业务列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:list')")
     @GetMapping("/business/list")
     public TableDataInfo businessList(SysSubAdminBusiness subAdminBusiness) {
         startPage();

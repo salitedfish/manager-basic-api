@@ -43,6 +43,7 @@ public class SysBusinessAuthController extends BaseController {
      * 获取业务权限列表
      */
     @ApiOperation("查询业务权限列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:permissionQuery:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysBusinessAuth sysBusinessAuth)
     {

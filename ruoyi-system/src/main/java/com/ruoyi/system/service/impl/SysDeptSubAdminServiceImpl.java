@@ -7,6 +7,7 @@ import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.common.utils.uuid.IdUtils;
 import com.ruoyi.system.domain.SysDeptRole;
@@ -75,13 +76,17 @@ public class SysDeptSubAdminServiceImpl implements ISysDeptSubAdminService {
     public List<TreeSelect> selectDeptTreeListWithUser(SysDept dept) {
         // 获取部门列表，并构建部门树
         List<SysDept> depts = selectDeptSubAdminList(dept);
-        List<SysDept> deptTrees = deptService.buildDeptTree(depts);
 
-        // 获取人员列表，并构建包含人员和部门的选择树
-        List<String> ids = depts.stream().map((item -> item.getDeptId())).collect(Collectors.toList());
-        List<SysUser> users = userService.selectUserListByDeptIds(ids);
-        List<TreeSelect> deptTreesWithUser = deptTrees.stream().map(d -> new TreeSelect(d, users)).collect(Collectors.toList());
-        return deptTreesWithUser;
+        if(StringUtils.isNotEmpty(depts)) {
+            List<SysDept> deptTrees = deptService.buildDeptTree(depts);
+
+            // 获取人员列表，并构建包含人员和部门的选择树
+            List<String> ids = depts.stream().map((item -> item.getDeptId())).collect(Collectors.toList());
+            List<SysUser> users = userService.selectUserListByDeptIds(ids);
+            List<TreeSelect> deptTreesWithUser = deptTrees.stream().map(d -> new TreeSelect(d, users)).collect(Collectors.toList());
+            return deptTreesWithUser;
+        }
+        return new ArrayList<>();
     };
 
     /**

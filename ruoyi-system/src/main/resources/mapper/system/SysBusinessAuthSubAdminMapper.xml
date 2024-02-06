@@ -90,6 +90,12 @@
                 )
 
             </if>
+            <if test="businessAuth.orgType != null and businessAuth.orgType != ''">
+                AND org_type = #{businessAuth.orgType}
+            </if>
+            <if test="businessAuth.orgName != null and businessAuth.orgName != ''">
+                AND org.name like concat(concat('%', #{businessAuth.orgName}), '%')
+            </if>
             <if test="businessAuth.manageOrgId != null and businessAuth.manageOrgId != ''">
                 AND manage_org_id = #{businessAuth.manageOrgId}
             </if>
@@ -103,6 +109,7 @@
                 and date_format(create_time,'%y%m%d') &lt;= date_format(#{businessAuth.params.endTime},'%y%m%d')
             </if>
         </where>
+        order by sba.create_time desc
     </select>
 
 </mapper>

@@ -3,6 +3,8 @@ package com.ruoyi.system.service.impl;
 import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.MessageUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysPost;
@@ -60,6 +62,26 @@ public class SysUserSubAdminServiceImpl implements ISysUserSubAdminService {
     {
         String userId = SecurityUtils.getLoginUser().getUser().getUserId();
         return userSusAdminMapper.selectUserList(user, userId);
+    }
+
+    /**
+     * 校验用户是否有数据权限
+     *
+     * @param userId 用户id
+     */
+    @Override
+    public void checkUserDataScope(String userId)
+    {
+        if (!SysUser.isAdmin(SecurityUtils.getUserId()))
+        {
+            SysUser user = new SysUser();
+            user.setUserId(userId);
+            List<SysUser> users = selectUserList(user);
+            if (StringUtils.isEmpty(users))
+            {
+                throw new ServiceException(MessageUtils.message("user.action.user.no.auth"));
+            }
+        }
     }
 
     /**
