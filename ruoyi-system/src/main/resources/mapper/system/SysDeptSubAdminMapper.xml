@@ -72,7 +72,7 @@
         left join sys_dept sd on sd.dept_id = sdr.dept_id
         left join sys_user su on sr.create_by = su.user_name
         where sr.del_flag = '2' and sdr.dept_id = #{deptRole.deptId} and ssar.user_id = #{userId}
-        <if test="id != null and id != 0">
+        <if test="deptRole.id != null and deptRole.id != ''">
             and sdr.id = #{deptRole.id}
         </if>
         <if test="deptRole.roleId != null and deptRole.roleId != 0">

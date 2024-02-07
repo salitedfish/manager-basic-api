@@ -90,7 +90,6 @@ public class SysDeptController extends BaseController
     /**
      * 根据部门编号获取详细信息
      */
-
     @ApiOperation("根据部门编号获取详细信息")
     @PreAuthorize("@ss.hasAnyPermi('system:dept:query,system:subAdminDept:query')")
     @GetMapping(value = "/{deptId}")
@@ -193,6 +192,11 @@ public class SysDeptController extends BaseController
         return success(list);
     }
 
+    /**
+     * 查询部门分配了哪些角色
+     * @param sdr
+     * @return
+     */
     @ApiOperation("查询部门关联的角色列表")
     @GetMapping("/role/list")
     public TableDataInfo selectDeptRoleList(SysDeptRole sdr) {
@@ -206,6 +210,11 @@ public class SysDeptController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 新增部门分配的角色
+     * @param sdr
+     * @return
+     */
     @ApiOperation("新增部门关联的角色列表")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
@@ -219,6 +228,11 @@ public class SysDeptController extends BaseController
         return success(deptService.insertDeptRole(sdr));
     }
 
+    /**
+     * 删除部门分配的角色
+     * @param sdr
+     * @return
+     */
     @ApiOperation("删除部门关联的角色")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")

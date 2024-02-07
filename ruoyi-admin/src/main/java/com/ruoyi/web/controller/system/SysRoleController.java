@@ -80,7 +80,6 @@ public class SysRoleController extends BaseController
         } else {
             list = roleService.selectRoleList(role);
         }
-
         return getDataTable(list);
     }
 
@@ -126,7 +125,6 @@ public class SysRoleController extends BaseController
         }
         role.setCreateBy(getUsername());
         return success(roleService.insertRole(role));
-
     }
 
     /**
@@ -168,7 +166,7 @@ public class SysRoleController extends BaseController
     }
 
     /**
-     * 修改保存数据权限
+     * 修改保存数据权限（弃用）
      */
     @PreAuthorize("@ss.hasPermi('system:role:edit')")
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
@@ -276,7 +274,7 @@ public class SysRoleController extends BaseController
     }
 
     /**
-     * 获取对应角色部门树列表
+     * 获取对应角色部门树列表（弃用）
      */
     @PreAuthorize("@ss.hasPermi('system:role:query')")
     @GetMapping(value = "/deptTree/{roleId}")
@@ -284,8 +282,8 @@ public class SysRoleController extends BaseController
     {
         AjaxResult ajax = AjaxResult.success();
         ajax.put("checkedKeys", deptService.selectDeptListByRoleId(roleId));
-//        ajax.put("depts", deptService.selectDeptTreeList(new SysDept()));
-        ajax.put("depts", deptService.selectDeptTreeListWithUser(new SysDept()));
+        ajax.put("depts", deptService.selectDeptTreeList(new SysDept()));
+//        ajax.put("depts", deptService.selectDeptTreeListWithUser(new SysDept()));
         return ajax;
     }
 }
