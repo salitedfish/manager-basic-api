@@ -77,12 +77,8 @@
                 AND sba.business_name = #{businessName}
             </if>
             <if test="orgId != null and orgId != ''">
-                <!-- 如果传了currentOrg说明只查这个组织的数据 -->
-                <if test="currentOrg == true">
-                        AND org_id = #{orgId}
-                </if>
-                <!-- 如果没传则说明只查这个组织关联的所有数据 -->
-                <if test="currentOrg != true">
+                <!-- 如果传了extendsOrg说明查这个组织继承的所有数据 -->
+                <if test="extendsOrg != null and extendsOrg != ''">
                     <if test="orgType == 0">
                         AND find_in_set(org_id, #{deptFullPathId})
                     </if>
@@ -95,9 +91,13 @@
                         AND org_id = #{orgId}
                     </if>
                 </if>
-
+                <!-- 如果没传则说明只查这个组织的数据 -->
+                <if test="extendsOrg == null or extendsOrg == ''">
+                    AND org_id = #{orgId}
+                </if>
             </if>
-            <if test="orgType != null and orgType != ''">
+            <!-- orgType 只有在不查询继承权限的时候才生效 -->
+            <if test="orgType != null and orgType != '' and (extendsOrg == null or extendsOrg == '')">
                 AND org_type = #{orgType}
             </if>
             <if test="orgName != null and orgName != ''">

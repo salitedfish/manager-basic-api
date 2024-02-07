@@ -66,10 +66,11 @@ public class SysBusinessAuth extends BaseEntity {
      */
     private String deptFullPathId;
 
+
     /**
-     * 是否只查传递的组织，不查关联组织
+     * 是否查询继承的组织权限
      */
-    private Boolean currentOrg;
+    private Boolean extendsOrg;
 
     /** 子管理员 */
     private Boolean subAdmin;
@@ -90,7 +91,7 @@ public class SysBusinessAuth extends BaseEntity {
                 ", manageOrgType='" + manageOrgType + '\'' +
                 ", manageOrgName='" + manageOrgName + '\'' +
                 ", deptFullPathId='" + deptFullPathId + '\'' +
-                ", currentOrg=" + currentOrg +
+                ", extendsOrg=" + extendsOrg +
                 '}';
     }
 
@@ -118,12 +119,12 @@ public class SysBusinessAuth extends BaseEntity {
         this.manageOrgCode = manageOrgCode;
     }
 
-    public Boolean getCurrentOrg() {
-        return currentOrg;
+    public Boolean getExtendsOrg() {
+        return extendsOrg;
     }
 
-    public void setCurrentOrg(Boolean currentOrg) {
-        this.currentOrg = currentOrg;
+    public void setExtendsOrg(Boolean extendsOrg) {
+        this.extendsOrg = extendsOrg;
     }
 
     public String getBusinessId() {

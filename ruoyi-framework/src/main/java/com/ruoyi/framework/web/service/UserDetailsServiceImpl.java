@@ -79,6 +79,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
         sba.setOrgId(user.getUserId());
         sba.setOrgType(BusinessAuthOrgType.USER.getValue());
         sba.setDeptFullPathId(user.getDeptFullPathId());
+        sba.setExtendsOrg(true);
         return new LoginUser(user.getUserId(), user.getDeptId(), user, permissionService.getMenuPermission(user), businessAuthService.selectBusinessAuthList(sba));
     }
 }
