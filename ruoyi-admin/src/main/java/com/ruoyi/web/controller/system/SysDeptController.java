@@ -79,7 +79,7 @@ public class SysDeptController extends BaseController
     {
         List<SysDept> depts = new ArrayList<>();
         if(StringUtils.isNotNull(subAdmin)) {
-            depts = deptSubAdminService.selectDeptSubAdminList(new SysDept());
+            depts = deptSubAdminService.selectDeptSubAdminAllList(new SysDept());
         } else {
             depts = deptService.selectDeptList(new SysDept());
         }

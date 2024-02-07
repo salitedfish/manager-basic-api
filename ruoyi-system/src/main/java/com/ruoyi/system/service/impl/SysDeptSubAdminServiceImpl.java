@@ -57,6 +57,31 @@ public class SysDeptSubAdminServiceImpl implements ISysDeptSubAdminService {
     }
 
     /**
+     * 查询部门管理全部数据 (分级管理)
+     *
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    public List<SysDept> selectDeptSubAdminAllList(SysDept dept) {
+        List<SysDept> depts = deptMapper.selectDeptList(dept);
+        List<SysDept> subAdminDepts = selectDeptSubAdminList(dept);
+        for(SysDept de: depts) {
+            Boolean exists = false;
+            for(SysDept d: subAdminDepts) {
+                if(de.getDeptId().equals(d.getDeptId())) {
+                    exists = true;
+                }
+            }
+            if(exists) {
+                de.setSubAdmin(true);
+            } else {
+                de.setSubAdmin(false);
+            }
+        }
+        return depts;
+    };
+
+    /**
      * 查询部门树结构信息
      *
      * @param dept 部门信息
