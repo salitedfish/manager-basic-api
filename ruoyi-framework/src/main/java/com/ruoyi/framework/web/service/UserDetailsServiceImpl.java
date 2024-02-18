@@ -50,12 +50,11 @@ public class UserDetailsServiceImpl implements UserDetailsService
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         SysUser user = userService.selectUserByUserName(username);
-        // 设置用户全部的角色，包括继承的角色
-        user.setRoles(roleService.selectALLRolesByUser(user));
         if (StringUtils.isNull(user))
         {
             log.info("登录用户：{} 不存在.", username);
-            throw new ServiceException(MessageUtils.message("user.not.exists"));
+//            throw new ServiceException(MessageUtils.message("user.not.exists"));
+            throw new ServiceException(MessageUtils.message("user.userName.none"));
         }
         else if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
         {
@@ -69,6 +68,9 @@ public class UserDetailsServiceImpl implements UserDetailsService
         }
 
         passwordService.validate(user);
+
+        // 设置用户全部的角色，包括继承的角色
+        user.setRoles(roleService.selectALLRolesByUser(user));
 
         return createLoginUser(user);
     }

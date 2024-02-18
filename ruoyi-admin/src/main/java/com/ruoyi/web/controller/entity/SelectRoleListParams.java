@@ -1,4 +1,4 @@
-package com.ruoyi.system.domain;
+package com.ruoyi.web.controller.entity;
 
 public class SelectRoleListParams {
 
