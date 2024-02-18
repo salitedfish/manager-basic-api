@@ -145,6 +145,7 @@ public class SysPostController extends BaseController
     }
 
     @ApiOperation("查询岗位关联的角色列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:authPostRole:list')")
     @GetMapping("/role/list")
     public TableDataInfo selectPostRoleList(SysPostRole spr) {
         startPage();
@@ -153,6 +154,7 @@ public class SysPostController extends BaseController
     }
 
     @ApiOperation("新增岗位关联的角色列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:authPostRole:list')")
     @Log(title = "岗位管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult insertPostRoleList(@RequestBody SysPostRole spr) {
@@ -166,6 +168,7 @@ public class SysPostController extends BaseController
     }
 
     @ApiOperation("删除岗位关联的角色")
+    @PreAuthorize("@ss.hasAnyPermi('system:authPostRole:list')")
     @Log(title = "岗位管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult deletePostRoleList(@RequestBody SysPostRole spr) {

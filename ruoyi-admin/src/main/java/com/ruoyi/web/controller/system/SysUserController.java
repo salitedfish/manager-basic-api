@@ -86,7 +86,7 @@ public class SysUserController extends BaseController
 
     @ApiOperation("导出用户列表")
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
-    @PreAuthorize("@ss.hasAnyPermi('system:user:export,system:subAdminUser:export')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:export,system:subUser:export')")
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysUser user)
     {
@@ -102,7 +102,7 @@ public class SysUserController extends BaseController
 
     @ApiOperation("导入用户")
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
-    @PreAuthorize("@ss.hasAnyPermi('system:user:import,system:subAdminUser:import')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:import,system:subUser:import')")
     @PostMapping("/importData")
     public AjaxResult importData(MultipartFile file, boolean updateSupport, boolean subAdmin) throws Exception
     {
@@ -125,7 +125,7 @@ public class SysUserController extends BaseController
      * 根据用户编号获取详细信息
      */
     @ApiOperation("根据用户编号获取详细信息")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:query,system:subAdminUser:query')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:query')")
     @GetMapping(value = { "/", "/{userId}" })
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) String userId)
     {
@@ -148,7 +148,7 @@ public class SysUserController extends BaseController
      * 新增用户
      */
     @ApiOperation("新增用户")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:add,system:subAdminUser:add')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:add,system:subUser:add')")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysUser user)
@@ -174,7 +174,7 @@ public class SysUserController extends BaseController
      * 修改用户
      */
     @ApiOperation("修改用户")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:edit,system:subAdminUser:edit')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:edit,system:subUser:edit')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysUser user)
@@ -206,7 +206,7 @@ public class SysUserController extends BaseController
      * 删除用户
      */
     @ApiOperation("删除用户")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:remove,system:subAdminUser:remove')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:remove,system:subUser:remove')")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{userIds}")
     public AjaxResult remove(@PathVariable String[] userIds)
@@ -222,7 +222,7 @@ public class SysUserController extends BaseController
      * 重置密码
      */
     @ApiOperation("重置密码")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:resetPwd,system:subAdminUser:resetPwd')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:resetPwd,system:subUser:resetPwd')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public AjaxResult resetPwd(@RequestBody SysUser user)
@@ -242,7 +242,7 @@ public class SysUserController extends BaseController
      * 状态修改
      */
     @ApiOperation("状态修改")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:edit,system:subAdminUser:edit')")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:edit,system:subUser:edit')")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@RequestBody SysUser user)
@@ -261,7 +261,7 @@ public class SysUserController extends BaseController
      * 根据用户编号获取授权角色
      */
     @ApiOperation("根据用户编号获取授权角色")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:query,system:subAdminUser:query')")
+    @PreAuthorize("@ss.hasAnyPermi('system:authUserRole:list,system:authSubUserRole:list')")
     @GetMapping("/authRole/{userId}")
     public AjaxResult authRole(@PathVariable("userId") String userId, Boolean subAdmin)
     {
@@ -284,7 +284,7 @@ public class SysUserController extends BaseController
      * 用户授权角色
      */
     @ApiOperation("用户授权角色")
-    @PreAuthorize("@ss.hasAnyPermi('system:user:edit,system:subAdminUser:edit')")
+    @PreAuthorize("@ss.hasAnyPermi('system:authUserRole:list,system:authSubUserRole:list')")
     @Log(title = "用户管理", businessType = BusinessType.GRANT)
     @PutMapping("/authRole")
     public AjaxResult insertAuthRole(String userId, Long[] roleIds, Boolean subAdmin)

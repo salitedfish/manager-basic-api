@@ -44,6 +44,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-添加分配的部门列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:add')")
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/dept/add")
     public AjaxResult deptAdd(@RequestBody SysSubAdminDept subAdminDept) {
@@ -58,6 +59,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-删除分配的部门列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:remove')")
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/dept/delete")
     public AjaxResult deptDelete(@RequestBody SysSubAdminDept subAdminDept) {
@@ -84,6 +86,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-添加分配的岗位列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:add')")
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/post/add")
     public AjaxResult postAdd(@RequestBody SysSubAdminPost subAdminPost) {
@@ -98,6 +101,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-删除分配的岗位列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:remove')")
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/post/delete")
     public AjaxResult postDelete(@RequestBody SysSubAdminPost subAdminPost) {
@@ -124,6 +128,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-添加分配的角色列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:add')")
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
     public AjaxResult roleAdd(@RequestBody SysSubAdminRole subAdminRole) {
@@ -138,6 +143,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-删除分配的角色列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:remove')")
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")
     public AjaxResult postDelete(@RequestBody SysSubAdminRole subAdminRole) {
@@ -164,6 +170,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-添加分配的业务列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:add')")
     @Log(title = "分级管理", businessType = BusinessType.INSERT)
     @PostMapping("/business/add")
     public AjaxResult businessAdd(@RequestBody SysSubAdminBusiness subAdminBusiness) {
@@ -178,6 +185,7 @@ public class SysSubAdminController extends BaseController {
     };
 
     @ApiOperation("分级管理-删除分配的业务列表")
+    @PreAuthorize("@ss.hasAnyPermi('system:subAdmin:remove')")
     @Log(title = "分级管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/business/delete")
     public AjaxResult businessDelete(@RequestBody SysSubAdminBusiness subAdminBusiness) {

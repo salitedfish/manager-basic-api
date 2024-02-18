@@ -32,15 +32,14 @@ public class SysBusinessAuthServiceImpl implements ISysBusinessAuthService {
     @Autowired
     private SysDeptMapper deptMapper;
 
-
     /**
      * 根据权限信息查询业务权限列表
      */
     public List<SysBusinessAuth> selectBusinessAuthList(SysBusinessAuth sbam) {
         String orgType = sbam.getOrgType();
         String orgId = sbam.getOrgId();
-        // 如果是部门和人员，因为要根据部门路径查找继承的角色，所以获取部门路径
-        if(StringUtils.isNotNull(orgId) && StringUtils.isNull(sbam.getDeptFullPathId())) {
+        // 如果要查询继承的权限，并且是部门和人员，需要获取部门路径
+        if( StringUtils.isNotNull(sbam.getExtendsOrg()) && StringUtils.isNotNull(orgId) && StringUtils.isNull(sbam.getDeptFullPathId()) ) {
             if(orgType.equals(BusinessAuthOrgType.DEPT.getValue())) {
                 SysDept dept = deptMapper.selectDeptById(orgId);
                 if(StringUtils.isNotNull(dept)) {
@@ -55,7 +54,6 @@ public class SysBusinessAuthServiceImpl implements ISysBusinessAuthService {
                 }
             }
         }
-
         return businessAuthMapper.selectBusinessAuthList(sbam);
     };
 
@@ -63,25 +61,17 @@ public class SysBusinessAuthServiceImpl implements ISysBusinessAuthService {
      * 新增业务权限
      */
     public int insertBusinessAuth(List<SysBusinessAuth> sysBusinessAuthList) {
-        List<SysBusinessAuth> sbas = new ArrayList<>();
         String userName = SecurityUtils.getLoginUser().getUser().getUserName();
         for(SysBusinessAuth sba: sysBusinessAuthList) {
-            SysBusinessAuth sbaNew = sba;
-            // 先判断之前有没有同样的数据
-            // 如果没有再新增
-            sbaNew.setCreateBy(userName);
-            sbas.add(sbaNew);
+            sba.setCreateBy(userName);
         }
-        return businessAuthMapper.insertBusinessAuth(sbas);
+        return businessAuthMapper.insertBusinessAuth(sysBusinessAuthList);
     };
 
     /**
      * 删除业务授权列表
      */
     public int deleteBusinessAuth(List<Long> businessAuthIds) {
-
         return businessAuthMapper.deleteBusinessAuth(businessAuthIds);
     };
-
-
 }

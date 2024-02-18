@@ -44,7 +44,6 @@ public class SysDeptServiceImpl implements ISysDeptService
 
     /**
      * 查询部门管理数据
-     * 
      * @param dept 部门信息
      * @return 部门信息集合
      */
@@ -56,8 +55,16 @@ public class SysDeptServiceImpl implements ISysDeptService
     }
 
     /**
+     * 查询部门管理数据（不过滤业务权限）
+     * @param dept 部门信息
+     * @return 部门信息集合
+     */
+    public List<SysDept> selectDeptAllList(SysDept dept)     {
+        return deptMapper.selectDeptList(dept);
+    }
+
+    /**
      * 查询部门树结构信息
-     * 
      * @param dept 部门信息
      * @return 部门树信息集合
      */
@@ -65,6 +72,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     public List<TreeSelect> selectDeptTreeList(SysDept dept)
     {
         List<SysDept> depts = SpringUtils.getAopProxy(this).selectDeptList(dept);
+//        List<SysDept> depts = selectDeptList(dept);
         return buildDeptTreeSelect(depts);
     }
 
@@ -76,7 +84,8 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public List<TreeSelect> selectDeptTreeListWithUser(SysDept dept) {
         // 获取部门列表，并构建部门树
-        List<SysDept> depts = SpringUtils.getAopProxy(this).selectDeptList(dept);
+//        List<SysDept> depts = SpringUtils.getAopProxy(this).selectDeptList(dept);
+        List<SysDept> depts = selectDeptList(dept);
         List<SysDept> deptTrees = buildDeptTree(depts);
 
         // 获取人员列表，并构建包含人员和部门的选择树

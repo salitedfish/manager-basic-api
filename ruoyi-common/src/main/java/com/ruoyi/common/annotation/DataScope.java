@@ -27,6 +27,11 @@ public @interface DataScope
     public String userAlias() default "";
 
     /**
+     * 有创建人id表的别名
+     */
+    public String createAlias() default "";
+
+    /**
      * 权限字符（用于多个角色匹配符合要求的权限）默认根据权限注解@ss获取，多个权限用逗号分隔开来
      */
     public String permission() default "";

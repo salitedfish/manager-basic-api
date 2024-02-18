@@ -81,7 +81,7 @@ public class SysDeptController extends BaseController
         if(StringUtils.isNotNull(subAdmin)) {
             depts = deptSubAdminService.selectDeptSubAdminAllList(new SysDept());
         } else {
-            depts = deptService.selectDeptList(new SysDept());
+            depts = deptService.selectDeptAllList(new SysDept());
         }
         depts.removeIf(d -> d.getDeptId().equals(deptId) || ArrayUtils.contains(StringUtils.split(d.getAncestors(), ","), deptId + ""));
         return success(depts);
@@ -91,7 +91,7 @@ public class SysDeptController extends BaseController
      * 根据部门编号获取详细信息
      */
     @ApiOperation("根据部门编号获取详细信息")
-    @PreAuthorize("@ss.hasAnyPermi('system:dept:query,system:subAdminDept:query')")
+    @PreAuthorize("@ss.hasAnyPermi('system:dept:query,system:subDept:query')")
     @GetMapping(value = "/{deptId}")
     public AjaxResult getInfo(@PathVariable String deptId)
     {
@@ -103,7 +103,7 @@ public class SysDeptController extends BaseController
      * 新增部门
      */
     @ApiOperation("新增部门")
-    @PreAuthorize("@ss.hasAnyPermi('system:dept:add,system:subAdminDept:add')")
+    @PreAuthorize("@ss.hasAnyPermi('system:dept:add,system:subDept:add')")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysDept dept)
@@ -128,7 +128,7 @@ public class SysDeptController extends BaseController
      * 修改部门
      */
     @ApiOperation("修改部门")
-    @PreAuthorize("@ss.hasAnyPermi('system:dept:edit,system:subAdminDept:edit')")
+    @PreAuthorize("@ss.hasAnyPermi('system:dept:edit,system:subDept:edit')")
     @Log(title = "部门管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysDept dept)
@@ -159,7 +159,7 @@ public class SysDeptController extends BaseController
      * 删除部门
      */
     @ApiOperation("删除")
-    @PreAuthorize("@ss.hasAnyPermi('system:dept:remove,system:subAdminDept:remove')")
+    @PreAuthorize("@ss.hasAnyPermi('system:dept:remove,system:subDept:remove')")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{deptId}")
     public AjaxResult remove(@PathVariable String deptId)
@@ -179,6 +179,7 @@ public class SysDeptController extends BaseController
     /**
      * 获取包含人员的部门树
      */
+    @PreAuthorize("@ss.hasAnyPermi('system:dept:list,system:subAdminDept:list')")
     @ApiOperation("查询包含人员的部门树")
     @GetMapping("/treeWithUser")
     public AjaxResult selectDeptTreeListWithUser(SysDept dept)
@@ -197,6 +198,7 @@ public class SysDeptController extends BaseController
      * @param sdr
      * @return
      */
+    @PreAuthorize("@ss.hasAnyPermi('system:authDeptRole:list,system:authSubDeptRole:list')")
     @ApiOperation("查询部门关联的角色列表")
     @GetMapping("/role/list")
     public TableDataInfo selectDeptRoleList(SysDeptRole sdr) {
@@ -215,6 +217,7 @@ public class SysDeptController extends BaseController
      * @param sdr
      * @return
      */
+    @PreAuthorize("@ss.hasAnyPermi('system:authDeptRole:list,system:authSubDeptRole:list')")
     @ApiOperation("新增部门关联的角色列表")
     @Log(title = "部门管理", businessType = BusinessType.INSERT)
     @PostMapping("/role/add")
@@ -233,6 +236,7 @@ public class SysDeptController extends BaseController
      * @param sdr
      * @return
      */
+    @PreAuthorize("@ss.hasAnyPermi('system:authDeptRole:list,system:authSubDeptRole:list')")
     @ApiOperation("删除部门关联的角色")
     @Log(title = "部门管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/role/delete")

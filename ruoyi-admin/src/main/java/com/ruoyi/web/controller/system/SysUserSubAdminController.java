@@ -85,7 +85,7 @@ public class SysUserSubAdminController extends BaseController {
     /**
      * 根据用户编号获取详细信息
      */
-    @PreAuthorize("@ss.hasPermi('system:subAdminUser:query')")
+    @PreAuthorize("@ss.hasAnyPermi('system:subUser:query')")
     @ApiOperation("分级管理-根据用户编号获取详细信息")
     @GetMapping(value = { "/", "/{userId}" })
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) String userId)

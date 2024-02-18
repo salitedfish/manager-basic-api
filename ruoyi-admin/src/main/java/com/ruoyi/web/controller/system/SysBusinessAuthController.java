@@ -43,7 +43,7 @@ public class SysBusinessAuthController extends BaseController {
      * 获取业务权限列表
      */
     @ApiOperation("查询业务权限列表")
-    @PreAuthorize("@ss.hasAnyPermi('system:permissionQuery:list')")
+    @PreAuthorize("@ss.hasAnyPermi('system:permissionQuery:list, system:authSubUserBusiness:list, system:authSubDeptBusiness:list, system:authPostBusiness:list')")
     @GetMapping("/list")
     public TableDataInfo list(SysBusinessAuth sysBusinessAuth)
     {
@@ -61,6 +61,7 @@ public class SysBusinessAuthController extends BaseController {
     /**
      * 新增业务权限列表
      */
+    @PreAuthorize("@ss.hasAnyPermi('system:permissionQuery:list, system:authSubUserBusiness:list, system:authSubDeptBusiness:list,system:authPostBusiness:list')")
     @ApiOperation("新增业务权限列表")
     @Log(title = "业务权限", businessType = BusinessType.INSERT)
     @PostMapping("/add")
@@ -91,6 +92,7 @@ public class SysBusinessAuthController extends BaseController {
     /**
      * 取消业务权限授权
      */
+    @PreAuthorize("@ss.hasAnyPermi('system:permissionQuery:list, system:authSubUserBusiness:list, system:authSubDeptBusiness:list,system:authPostBusiness:list')")
     @ApiOperation("删除业务授权列表")
     @Log(title = "业务权限", businessType = BusinessType.DELETE)
     @DeleteMapping("/delete")
