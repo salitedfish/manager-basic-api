@@ -53,8 +53,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
         if (StringUtils.isNull(user))
         {
             log.info("登录用户：{} 不存在.", username);
-//            throw new ServiceException(MessageUtils.message("user.not.exists"));
-            throw new ServiceException(MessageUtils.message("user.userName.none"));
+            throw new ServiceException(MessageUtils.message("user.not.exists"));
         }
         else if (UserStatus.DELETED.getCode().equals(user.getDelFlag()))
         {

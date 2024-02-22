@@ -92,22 +92,18 @@ public class DataScopeAspect
             {
                 // 获取登录用户的数据权限
                 List<SysBusinessAuth> sbas = loginUser.getBusinessAuthList();
-                System.out.println("当前登录用户权限列表" + sbas);
-                System.out.println("当前登录用户角色列表" + loginUser.getUser().getRoles());
                 // 获取需要过滤的业务标识
                 String businessCode = controllerDataScope.businessCode();
                 // 根据业务标识过滤有哪些业务权限
                 List<SysBusinessAuth> currentAuths = sbas.stream().filter(sba->sba.getBusinessCode().equals(businessCode)).collect(Collectors.toList());
-                // 将人员和部门的业务权限区分开，生成set去重
+                // 将人员和部门的业务权限区分开
                 Set<String> deptIds = currentAuths.stream().filter(sba->sba.getManageOrgType().equals(BusinessAuthOrgType.DEPT.getValue())).map(sba->sba.getManageOrgId()).collect(Collectors.toSet());
                 Set<String> userIds = currentAuths.stream().filter(sba->sba.getManageOrgType().equals(BusinessAuthOrgType.USER.getValue())).map(sba->sba.getManageOrgId()).collect(Collectors.toSet());
                 // 构建过滤sql字符串
                 dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(), controllerDataScope.userAlias(), controllerDataScope.createAlias(),deptIds, userIds);
-
 //                String permission = StringUtils.defaultIfEmpty(controllerDataScope.permission(), PermissionContextHolder.getContext());
 //                dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
 //                        controllerDataScope.userAlias(), permission);
-
             }
         }
     }
@@ -138,7 +134,7 @@ public class DataScopeAspect
         // 通过人员id去过滤
         if(StringUtils.isNotEmpty(userAlias)) {
             for(String userId: userIds) {
-                sqlString.append(StringUtils.format("OR {}.user_id = '{}'",userAlias, userId));
+                sqlString.append(StringUtils.format(" OR {}.user_id = '{}'",userAlias, userId));
 //                sqlString.append(StringUtils.format("OR {}.user_id = '{}' OR {}.create_by IN (SELECT user_name FROM sys_user WHERE user_id = '{}')",userAlias, userId, userAlias, userId));
                 conditions.add(userId);
             }
@@ -147,7 +143,7 @@ public class DataScopeAspect
         // 通过创建人id去过滤
         if(StringUtils.isNotEmpty(createAlias)) {
             for(String userId: userIds) {
-                sqlString.append(StringUtils.format("OR {}.create_id = '{}')",createAlias, userId));
+                sqlString.append(StringUtils.format(" OR {}.create_id = '{}'",createAlias, userId));
                 conditions.add(userId);
             }
         }

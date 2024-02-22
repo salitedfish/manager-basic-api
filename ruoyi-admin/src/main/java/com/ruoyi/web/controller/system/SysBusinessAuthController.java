@@ -37,8 +37,6 @@ public class SysBusinessAuthController extends BaseController {
     @Autowired
     private ISysBusinessAuthSubAdminService businessAuthSubAdminService;
 
-
-
     /**
      * 获取业务权限列表
      */

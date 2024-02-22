@@ -230,7 +230,7 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         String deptId = StringUtils.isNull(dept.getDeptId()) ? "" : dept.getDeptId();
         SysDept info = deptMapper.checkDeptNameUnique(dept.getDeptName(), dept.getParentId());
-        if (StringUtils.isNotNull(info) && (info.getDeptId().equals(deptId)))
+        if (StringUtils.isNotNull(info) && (!info.getDeptId().equals(deptId)))
         {
             return UserConstants.NOT_UNIQUE;
         }
@@ -260,16 +260,16 @@ public class SysDeptServiceImpl implements ISysDeptService
     @Override
     public void checkDeptDataScope(String deptId)
     {
-        if (!SysUser.isAdmin(SecurityUtils.getUserId()))
-        {
-            SysDept dept = new SysDept();
-            dept.setDeptId(deptId);
-            List<SysDept> depts = SpringUtils.getAopProxy(this).selectDeptList(dept);
-            if (StringUtils.isEmpty(depts))
-            {
-                throw new ServiceException("没有权限访问部门数据！");
-            }
-        }
+//        if (!SysUser.isAdmin(SecurityUtils.getUserId()))
+//        {
+//            SysDept dept = new SysDept();
+//            dept.setDeptId(deptId);
+//            List<SysDept> depts = SpringUtils.getAopProxy(this).selectDeptList(dept);
+//            if (StringUtils.isEmpty(depts))
+//            {
+//                throw new ServiceException("没有权限访问部门数据！");
+//            }
+//        }
     }
 
     /**
@@ -289,9 +289,6 @@ public class SysDeptServiceImpl implements ISysDeptService
         }
         dept.setAncestors(info.getAncestors() + "," + dept.getParentId());
         dept.setDeptId(IdUtils.shortUUID());
-
-        // 新增部门关联角色
-//        insertDeptRole(dept);
 
         return deptMapper.insertDept(dept);
     }
@@ -315,10 +312,7 @@ public class SysDeptServiceImpl implements ISysDeptService
             updateDeptChildren(dept.getDeptId(), newAncestors, oldAncestors);
         }
         int result = deptMapper.updateDept(dept);
-        // 删除部门关联角色
-//        deleteDeptRole(dept);
-        // 新增部门关联角色
-//        insertDeptRole(dept);
+
         if (UserConstants.DEPT_NORMAL.equals(dept.getStatus()) && StringUtils.isNotEmpty(dept.getAncestors())
                 && !StringUtils.equals("0", dept.getAncestors()))
         {
@@ -426,8 +420,6 @@ public class SysDeptServiceImpl implements ISysDeptService
             sdr.setDeptId(dept.getDeptId());
             sdr.setRoleId(roleId);
             sdr.setCreateBy(SecurityUtils.getLoginUser().getUser().getUserName());
-            // 先判断之前有没有同样的数据
-            // 如果没有再新增
             sdrs.add(sdr);
         }
         return deptMapper.insertDeptRole(sdrs);

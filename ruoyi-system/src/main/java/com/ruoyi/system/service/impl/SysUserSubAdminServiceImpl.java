@@ -94,56 +94,6 @@ public class SysUserSubAdminServiceImpl implements ISysUserSubAdminService {
     @Transactional
     public int updateUser(SysUser user)
     {
-//        String userId = user.getUserId();
-//        SysUser sysUser = userService.selectUserById(userId);
-
-//        // 构建要修改的角色
-//        List<Long> roleIdList = new ArrayList<>();
-//        List<Long> srs = roleSubAdminService.selectRoleAll().stream().map(SysRole::getRoleId).collect(Collectors.toList());
-//        List<Long> roleIds = sysUser.getRoles().stream().map(SysRole::getRoleId).collect(Collectors.toList());
-//        for(Long id: roleIds) {
-//            Boolean exits = false;
-//            for(Long i: srs) {
-//                if(id.longValue() == i.longValue()) {
-//                    exits = true;
-//                    break;
-//                }
-//            }
-//            if(!exits) {
-//                roleIdList.add(id);
-//            }
-//        }
-//        roleIdList.addAll(Arrays.asList(user.getRoleIds()));
-//        user.setRoleIds(roleIdList.toArray(new Long[roleIdList.size()]));
-//
-//
-//        // 构建要修改的岗位
-//        List<String> postIdList = new ArrayList<>();
-//        List<String> sps = postSubAdminService.selectPostAll().stream().map(SysPost::getPostId).collect(Collectors.toList());
-//        List<String> postIds = postService.selectPostListByUserId(userId);
-//        for(String id: postIds) {
-//            Boolean exits = false;
-//            for(String i: sps) {
-//                if(id.equals(i)) {
-//                    exits = true;
-//                    break;
-//                }
-//            }
-//            if(!exits) {
-//                postIdList.add(id);
-//            }
-//        }
-//        postIdList.addAll(Arrays.asList(user.getPostIds()));
-//        user.setPostIds(postIdList.toArray(new String[postIdList.size()]));
-//
-//        // 删除用户与角色关联
-//        userRoleMapper.deleteUserRoleByUserId(userId);
-//        // 新增用户与角色管理
-//        userService.insertUserRole(user);
-//        // 删除用户与岗位关联
-//        userPostMapper.deleteUserPostByUserId(userId);
-//        // 新增用户与岗位管理
-//        userService.insertUserPost(user);
         updateUserRole(user.getUserId(), user.getRoleIds());
         updateUserPost(user.getUserId(), user.getPostIds());
         return userMapper.updateUser(user);

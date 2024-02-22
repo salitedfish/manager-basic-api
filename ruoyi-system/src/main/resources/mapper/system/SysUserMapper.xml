@@ -89,6 +89,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		<!-- 数据范围过滤 -->
 		${params.dataScope}
+		order by u.status desc, u.create_time desc
 	</select>
 
 	<select id="selectUserListByDeptIds" parameterType="List" resultMap="SysUserResult">

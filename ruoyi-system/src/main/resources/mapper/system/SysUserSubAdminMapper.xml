@@ -90,6 +90,7 @@
         <if test="sysUser.deptId != null and sysUser.deptId != ''">
             AND (u.dept_id = #{sysUser.deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE find_in_set(#{sysUser.deptId}, ancestors) ))
         </if>
+        order by u.status desc, u.create_time desc
     </select>
 
 
