@@ -82,10 +82,55 @@ public class SysPrinterController extends BaseController {
     @ApiOperation("打印入口")
     @PostMapping("/print")
     public AjaxResult print(String printStr) throws Exception {
-//        String printStr = this.genPrintHtmlStr();
+        // html字符串转pdf
         this.htmlStrToPdf(printStr);
+        // 根据打印机名称和pdf路径打印pdf
         this.printPdf(this.pdfPath, this.printerName);
         return success("打印完成");
+    }
+
+    /**
+     * html字符串转化为pdf
+     * @param htmlStr
+     * @throws Exception
+     */
+    public void htmlStrToPdf (String htmlStr) throws Exception {
+        // 配置字体文件
+        ConverterProperties converterProperties = new ConverterProperties();
+        FontProvider fontProvider = new DefaultFontProvider();
+        FontProgram fontProgram = FontProgramFactory.createFont(this.fontPath);
+        fontProvider.addFont(fontProgram);
+        converterProperties.setFontProvider(fontProvider);
+        // 创建pdf
+        OutputStream fileOutputStream = new FileOutputStream(this.pdfPath);
+        PdfWriter pdfWriter = new PdfWriter(fileOutputStream);
+        // 创建页面
+        PdfDocument doc = new PdfDocument(pdfWriter);
+        PageSize pageSize = new PageSize( this.pageWidth * 1.38f,this.pageHeight * 1.38f);
+        doc.setDefaultPageSize(pageSize);
+        // html转pdf
+        Document document = HtmlConverter.convertToDocument(htmlStr,doc,converterProperties);
+        document.getRenderer().close();
+        document.close();
+    }
+
+    /**
+     * 开始打印pdf
+     * @param pdfPath
+     * @param printerName
+     * @return
+     * @throws Exception
+     */
+    public PDDocument printPdf(String pdfPath, String printerName) throws Exception {
+        File file = new File(pdfPath);
+        PDDocument document = PDDocument.load(file);
+        // 根据打印机名称获取打印机
+        PrinterJob job = this.getPrintServiceByName(printerName);
+        // 设置打印样式
+        this.setPageStyle(document, job);
+        // 开始打印
+        job.print();
+        return document;
     }
 
     /**
@@ -125,10 +170,10 @@ public class SysPrinterController extends BaseController {
         // 设置打印纸张大小
         paper.setSize(this.pageWidth,this.pageHeight);
         // 设置边距，单位是像素，10mm边距，对应 28px
-        int marginLeft = 0;
-        int marginRight = 0;
-        int marginTop = 0;
-        int marginBottom = 0;
+        int marginLeft = -14;
+        int marginRight = -14;
+        int marginTop = -14;
+        int marginBottom = -14;
         // 设置打印位置 坐标
         paper.setImageableArea(marginLeft, marginRight, this.pageWidth - (marginLeft + marginRight), this.pageHeight - (marginTop + marginBottom));
         // custom page format
@@ -140,48 +185,6 @@ public class SysPrinterController extends BaseController {
         book.append(new PDFPrintable(document, Scaling.SCALE_TO_FIT), pageFormat, 1);
 //        book.append(new PDFPrintable(document, Scaling.ACTUAL_SIZE), pageFormat, 1);
         job.setPageable(book);
-    }
-
-    /**
-     * 开始打印pdf
-     * @param pdfPath
-     * @param printerName
-     * @return
-     * @throws Exception
-     */
-    public PDDocument printPdf(String pdfPath, String printerName) throws Exception {
-        File file = new File(pdfPath);
-        PDDocument document = PDDocument.load(file);
-        PrinterJob job = this.getPrintServiceByName(printerName);
-        this.setPageStyle(document, job);
-        // 开始打印
-        job.print();
-        return document;
-    }
-
-    /**
-     * html字符串转化为pdf
-     * @param htmlStr
-     * @throws Exception
-     */
-    public void htmlStrToPdf (String htmlStr) throws Exception {
-        // 配置字体文件
-        ConverterProperties converterProperties = new ConverterProperties();
-        FontProvider fontProvider = new DefaultFontProvider();
-        FontProgram fontProgram = FontProgramFactory.createFont(this.fontPath);
-        fontProvider.addFont(fontProgram);
-        converterProperties.setFontProvider(fontProvider);
-        // 创建pdf
-        OutputStream fileOutputStream = new FileOutputStream(this.pdfPath);
-        PdfWriter pdfWriter = new PdfWriter(fileOutputStream);
-        // 创建页面
-        PdfDocument doc = new PdfDocument(pdfWriter);
-        PageSize pageSize = new PageSize( this.pageWidth * 1.15f,this.pageHeight * 1.3f);
-        doc.setDefaultPageSize(pageSize);
-        // html转pdf
-        Document document = HtmlConverter.convertToDocument(htmlStr,doc,converterProperties);
-        document.getRenderer().close();
-        document.close();
     }
 
     // 构建要打印的html字符串
