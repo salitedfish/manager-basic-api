@@ -1,0 +1,18 @@
+{
+  "java.compile.nullAnalysis.mode": "automatic",
+  "sqltools.connections": [
+    {
+      "mysqlOptions": {
+        "authProtocol": "default",
+        "enableSsl": "Disabled"
+      },
+      "previewLimit": 50,
+      "server": "119.3.17.60",
+      "port": 3307,
+      "driver": "MySQL",
+      "name": "119.3.17.60",
+      "database": "ry_vue_test",
+      "username": "user"
+    }
+  ]
+}
