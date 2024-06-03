@@ -101,7 +101,28 @@ public class TokenService
         if (StringUtils.isNotEmpty(token))
         {
             String userKey = getTokenKey(token);
+            // 为了实现同平台同个账号只能同时登陆一个地方
+            LoginUser loginUser = redisCache.getCacheObject(userKey);
+            String userIdKey = getUserIdKey(loginUser.getUser().getUserId(), loginUser.getOs());
+            redisCache.deleteObject(userIdKey);
+
             redisCache.deleteObject(userKey);
+        }
+    }
+
+    /**
+     * 删除相同平台用户身份信息
+     */
+    public void delSPLoginUser(LoginUser loginUser)
+    {
+        if (loginUser != null)
+        {
+            String userIdKey = getUserIdKey(loginUser.getUser().getUserId(), loginUser.getOs());
+            String userKey = redisCache.getCacheObject(userIdKey);
+            if(StringUtils.isNotEmpty(userKey)) {
+                redisCache.deleteObject(userKey);
+            }
+            redisCache.deleteObject(userIdKey);
         }
     }
 
@@ -146,11 +167,18 @@ public class TokenService
      */
     public void refreshToken(LoginUser loginUser)
     {
+        // 为了实现同平台同个账号只能同时登陆一个地方
+        // 先删除之前redis保存的用户id加平台组成的key
+//        delSPLoginUser(loginUser);
+        // 设置过期时间
         loginUser.setLoginTime(System.currentTimeMillis());
         loginUser.setExpireTime(loginUser.getLoginTime() + expireTime * MILLIS_MINUTE);
         // 根据uuid将loginUser缓存
         String userKey = getTokenKey(loginUser.getToken());
         redisCache.setCacheObject(userKey, loginUser, expireTime, TimeUnit.MINUTES);
+        // 为了实现同平台同个账号只能同时登陆一个地方
+        String userIdKey = getUserIdKey(loginUser.getUser().getUserId() , loginUser.getOs());
+        redisCache.setCacheObject(userIdKey, userKey, expireTime, TimeUnit.MINUTES);
     }
 
     /**
@@ -227,5 +255,9 @@ public class TokenService
     private String getTokenKey(String uuid)
     {
         return CacheConstants.LOGIN_TOKEN_KEY + uuid;
+    }
+
+    private String getUserIdKey(String userId, String platForm) {
+        return CacheConstants.LOGIN_USER_ID_KEY + userId + platForm;
     }
 }
